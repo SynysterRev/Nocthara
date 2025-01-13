@@ -26,6 +26,6 @@ public class PlayerController : MonoBehaviour
     {
         _movement.Set(InputManager.Movement.x, InputManager.Movement.y);
         
-        _rb.linearVelocity = _movement * moveSpeed;
+        _rb.linearVelocity = _movement.normalized * moveSpeed;
     }
 }
