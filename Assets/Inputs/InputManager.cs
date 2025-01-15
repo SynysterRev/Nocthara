@@ -8,7 +8,9 @@ using UnityEngine.Events;
 public class InputManager : ScriptableObject, PlayerInput_Actions.IPlayerActions
 {
     public event UnityAction<Vector2> MoveEvent;
-    
+    public event UnityAction DashEvent;
+    public event UnityAction AttackEvent;
+
     private PlayerInput_Actions _playerInput;
 
     private void OnEnable()
@@ -34,41 +36,37 @@ public class InputManager : ScriptableObject, PlayerInput_Actions.IPlayerActions
 
     public void OnLook(InputAction.CallbackContext context)
     {
-       
     }
 
     public void OnAttack(InputAction.CallbackContext context)
     {
-        
+        if (context.phase is InputActionPhase.Performed)
+            AttackEvent?.Invoke();
     }
 
     public void OnInteract(InputAction.CallbackContext context)
     {
-      
     }
 
     public void OnCrouch(InputAction.CallbackContext context)
     {
-       
     }
 
     public void OnJump(InputAction.CallbackContext context)
     {
-      
     }
 
     public void OnPrevious(InputAction.CallbackContext context)
     {
-     
     }
 
     public void OnNext(InputAction.CallbackContext context)
     {
-       
     }
 
-    public void OnSprint(InputAction.CallbackContext context)
+    public void OnDash(InputAction.CallbackContext context)
     {
-       
+        if (context.phase is InputActionPhase.Performed)
+            DashEvent?.Invoke();
     }
 }
