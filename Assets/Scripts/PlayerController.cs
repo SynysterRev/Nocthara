@@ -11,6 +11,13 @@ enum State
     Attack
 }
 
+[Serializable]
+public class AttackBox
+{
+    public Vector2 BoxSize = new Vector2(0.8f, 0.3f);
+    public float BoxOffset = 0.55f;
+}
+
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
@@ -23,6 +30,9 @@ public class PlayerController : MonoBehaviour
     private Transform TransformAttack;
     [SerializeField]
     private float AttackRange;
+
+    [SerializeField] 
+    private AttackBox BoxAttack;
     
     [SerializeField]
     private Animator Animator;
@@ -112,13 +122,32 @@ public class PlayerController : MonoBehaviour
     {
         //play animation
         _currentState = State.Attack;
+        float angle = Vector2.SignedAngle(Vector2.down, _lastFacedDirection.normalized);
+        Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        TransformAttack.rotation = rotation;
+        Vector2 point = new Vector2(transform.position.x, transform.position.y) + _lastFacedDirection.normalized * BoxAttack.BoxOffset;
+        var colliders = Physics2D.OverlapBoxAll(point, BoxAttack.BoxSize, angle, LayerMask.GetMask("Enemies"));
+        if (colliders.Length > 0)
+        {
+            foreach (var col in colliders)
+            {
+                var damageable = col.GetComponent<IDamageable>();
+                damageable?.Damage(1);
+            }
+        }
     }
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.DrawWireSphere(TransformAttack.position, AttackRange);
+        var oldMatrix = Gizmos.matrix;
+        float angle = Vector2.SignedAngle(Vector2.down, _lastFacedDirection.normalized);
+        Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        Vector2 point = new Vector2(transform.position.x, transform.position.y) + _lastFacedDirection.normalized * BoxAttack.BoxOffset;
+        Gizmos.matrix = Matrix4x4.TRS(point, rotation, BoxAttack.BoxSize);
+        Gizmos.DrawWireCube(Vector3.zero, Vector3.one);
+        Gizmos.matrix = oldMatrix;
     }
-    
+
     private void UpdateAnimState()
     {
         int step = 360 / 8;
@@ -133,22 +162,18 @@ public class PlayerController : MonoBehaviour
         //player is moving
         if (_currentState == State.Dash)
         {
-            angle = Vector2.SignedAngle(Vector2.up, _lastFacedDirection.normalized);
+            angle = GetAngle(_lastFacedDirection);
             prefix = "dash";
         }
         else if (_currentState == State.Walk)
         {
-            angle = Vector2.SignedAngle(Vector2.up, _move.normalized);
+            angle = GetAngle(_move);
             prefix = "walk";
         }
         else
         {
-            angle = Vector2.SignedAngle(Vector2.up, _lastFacedDirection.normalized);
+            angle = GetAngle(_lastFacedDirection);
             prefix = "idle";
-        }
-        if (angle < 0.0f)
-        {
-            angle += 360.0f;
         }
         angle /= step;
         int index = (int)angle;
@@ -161,6 +186,16 @@ public class PlayerController : MonoBehaviour
 
         _currentStateAnim = newState;
         Animator.Play(_currentStateAnim, 0);
+    }
+
+    private float GetAngle(Vector2 direction)
+    {
+        float angle = Vector2.SignedAngle(Vector2.up, direction.normalized);
+        if (angle < 0.0f)
+        {
+            angle += 360.0f;
+        }
+        return angle;
     }
 
     public void EnableInput(bool bEnable)
