@@ -27,10 +27,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private Animator Animator;
     private string _currentStateAnim = "";
-    private List<string> _currentStateNames = new List<string>{ "_up", "_left", "_down","_right"  };
+    private List<string> _currentStateNames = new List<string>{ "_up", "_leftup", "_left", "_leftdown", "_down", "_rightdown", "_right", "_rightup"  };
     
     private Vector2 _movement;
-    private Vector2 _lastFacedDirection;
+    private Vector2 _lastFacedDirection = Vector2.down;
     private Rigidbody2D _rb;
     private Vector2 _move;
 
@@ -102,7 +102,10 @@ public class PlayerController : MonoBehaviour
     IEnumerator StartDash()
     {
         yield return new WaitForSeconds(0.2f);
-        _currentState = State.Idle;
+        if( _move.magnitude > 0.1f )
+            _currentState = State.Walk;
+        else 
+            _currentState = State.Idle;
     }
 
     private void OnAttack()
@@ -118,7 +121,7 @@ public class PlayerController : MonoBehaviour
     
     private void UpdateAnimState()
     {
-        int step = 360 / 4;
+        int step = 360 / 8;
         float angle;
         string prefix;
 
@@ -128,7 +131,12 @@ public class PlayerController : MonoBehaviour
         //     prefix = "attack";
         // }
         //player is moving
-        if (_move.magnitude > 0.0f)
+        if (_currentState == State.Dash)
+        {
+            angle = Vector2.SignedAngle(Vector2.up, _lastFacedDirection.normalized);
+            prefix = "dash";
+        }
+        else if (_currentState == State.Walk)
         {
             angle = Vector2.SignedAngle(Vector2.up, _move.normalized);
             prefix = "walk";
