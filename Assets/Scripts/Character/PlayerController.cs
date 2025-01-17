@@ -1,8 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Matrix4x4 = UnityEngine.Matrix4x4;
+using Quaternion = UnityEngine.Quaternion;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
 enum State
 {
@@ -31,8 +36,12 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] 
     private AttackBox BoxAttack;
-    
-    [SerializeField]
+
+    [SerializeField] 
+    private Transform WeaponAnchor;
+    private Quaternion _baseRotation;
+        
+    [SerializeField] 
     private Animator Animator;
     private string _currentStateAnim = "";
     private List<string> _currentStateNames = new List<string>{ "_up", "_leftup", "_left", "_leftdown", "_down", "_rightdown", "_right", "_rightup"  };
@@ -57,6 +66,8 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
+        _baseRotation = WeaponAnchor.rotation;
+        WeaponAnchor.gameObject.SetActive(false);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -74,7 +85,6 @@ public class PlayerController : MonoBehaviour
 
             _rb.linearVelocity = _movement.normalized * MoveSpeed;
         }
-
         UpdateAnimState();
     }
     
@@ -123,6 +133,9 @@ public class PlayerController : MonoBehaviour
         float angle = Vector2.SignedAngle(Vector2.down, _lastFacedDirection.normalized);
         Vector2 point = new Vector2(transform.position.x, transform.position.y) + _lastFacedDirection.normalized * BoxAttack.BoxOffset;
         var colliders = Physics2D.OverlapBoxAll(point, BoxAttack.BoxSize, angle, LayerMask.GetMask("Enemies"));
+        WeaponAnchor.rotation = _baseRotation * Quaternion.AngleAxis(angle, Vector3.forward);
+        WeaponAnchor.gameObject.SetActive(true);
+        StartCoroutine(Attack());
         if (colliders.Length > 0)
         {
             foreach (var col in colliders)
@@ -131,6 +144,13 @@ public class PlayerController : MonoBehaviour
                 damageable?.Damage(1);
             }
         }
+    }
+
+    // Temporary
+    IEnumerator Attack()
+    {
+        yield return new WaitForSeconds(0.2f);
+        WeaponAnchor.gameObject.SetActive(false);
     }
 
     private void OnDrawGizmosSelected()
