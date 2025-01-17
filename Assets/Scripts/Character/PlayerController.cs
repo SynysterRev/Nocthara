@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 enum State
 {
@@ -10,6 +11,8 @@ enum State
     Dash,
     Attack
 }
+
+
 
 [Serializable]
 public class AttackBox
@@ -20,16 +23,11 @@ public class AttackBox
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField]
-    private float moveSpeed = 5f;
+    [FormerlySerializedAs("moveSpeed")] [SerializeField]
+    private float MoveSpeed = 5f;
     
     [SerializeField]
-    private InputManager PlayerInputs = default;
-
-    [SerializeField]
-    private Transform TransformAttack;
-    [SerializeField]
-    private float AttackRange;
+    private InputManager PlayerInputs;
 
     [SerializeField] 
     private AttackBox BoxAttack;
@@ -74,7 +72,7 @@ public class PlayerController : MonoBehaviour
         {
             _movement.Set(_move.x, _move.y);
 
-            _rb.linearVelocity = _movement.normalized * moveSpeed;
+            _rb.linearVelocity = _movement.normalized * MoveSpeed;
         }
 
         UpdateAnimState();
@@ -99,7 +97,7 @@ public class PlayerController : MonoBehaviour
         if (_currentState != State.Dash)
         {
             _currentState = State.Dash;
-            _rb.linearVelocity = _lastFacedDirection * moveSpeed * 4.0f;
+            _rb.linearVelocity = _lastFacedDirection * MoveSpeed * 4.0f;
             StartCoroutine(StartDash());
         }
     }
@@ -123,8 +121,6 @@ public class PlayerController : MonoBehaviour
         //play animation
         _currentState = State.Attack;
         float angle = Vector2.SignedAngle(Vector2.down, _lastFacedDirection.normalized);
-        Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-        TransformAttack.rotation = rotation;
         Vector2 point = new Vector2(transform.position.x, transform.position.y) + _lastFacedDirection.normalized * BoxAttack.BoxOffset;
         var colliders = Physics2D.OverlapBoxAll(point, BoxAttack.BoxSize, angle, LayerMask.GetMask("Enemies"));
         if (colliders.Length > 0)
