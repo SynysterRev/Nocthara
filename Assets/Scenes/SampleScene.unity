@@ -683,6 +683,8 @@ MonoBehaviour:
   WayPoints:
   - {x: 7.398959, y: 2.7758815}
   - {x: 16.417366, y: 2.8433752}
+  Direction: {x: 0, y: -1}
+  LastDirection: {x: 0, y: -1}
 --- !u!114 &605176429
 MonoBehaviour:
   m_ObjectHideFlags: 0

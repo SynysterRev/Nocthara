@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Serialization;
@@ -9,6 +10,10 @@ public class EnemyStat
     public int Health;
     public int Damage;
     public float Speed;
+
+    // public float ViewRange;
+    // [Range(0, 360)]
+    // public float ViewAngle;
 }
 
 public class Enemy : MonoBehaviour, IDamageable
@@ -25,8 +30,15 @@ public class Enemy : MonoBehaviour, IDamageable
     [HideInInspector]
     [SerializeField]
     public List<Vector2> WayPoints;
+    
+    [HideInInspector]
+    public Vector2 Direction = Vector2.down;
+    [HideInInspector]
+    public Vector2 LastDirection = Vector2.down;
 
-    public NavMeshAgent Agent { get; set; } = null;
+    public NavMeshAgent Agent { get; private set; } = null;
+    public float ViewRange => Data.ViewRange;
+    public float ViewAngle => Data.ViewAngle;
 
     private void Awake()
     {
@@ -67,5 +79,12 @@ public class Enemy : MonoBehaviour, IDamageable
     {
         //temporary
         Destroy(gameObject);
+    }
+    
+    public Vector3 DirFromAngle(float angleInDegrees)
+    {
+        //move cone in direction of enemy movement
+        float angle = -Vector3.SignedAngle(Vector3.up, Direction, Vector3.forward);
+        return new Vector3(Mathf.Sin((angleInDegrees + angle) * Mathf.Deg2Rad), Mathf.Cos((angleInDegrees + angle) * Mathf.Deg2Rad),0.0f);
     }
 }

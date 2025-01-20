@@ -17,6 +17,11 @@ public class PatrolBehavior : AIBehavior
     {
         if (!_enemy) return;
         Patrol();
+        _enemy.Direction = _enemy.Agent.velocity.normalized;
+        if (_enemy.Direction != Vector2.zero)
+        {
+            _enemy.LastDirection = _enemy.Direction;
+        }
     }
 
     public override void ExitBehaviour()
