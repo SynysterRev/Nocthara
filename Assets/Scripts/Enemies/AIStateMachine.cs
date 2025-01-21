@@ -1,37 +1,72 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using AYellowpaper.SerializedCollections;
 using UnityEngine;
 
 public class AIStateMachine : MonoBehaviour
 {
-    [SerializedDictionary("Behavior Name", "SO Behavior")]
-    public SerializedDictionary<string, AIBehavior> Behaviors;
     private AIBehavior _currentState;
+    private Enemy _enemy;
+
+    private Coroutine _checkCoroutine;
+
+    public Transform Target { get; set; }
+
+    private readonly float _checkPlayerTime = 0.3f;
+    private float _checkPlayerTimer = 0.0f;
 
     private void Start()
     {
-        _currentState = Behaviors["Patrol"];
+        _enemy = GetComponent<Enemy>();
+        _currentState = new PatrolBehavior();
         _currentState?.Initialize(gameObject);
+        _checkPlayerTimer = _checkPlayerTime;
     }
 
     private void Update()
     {
+        if (!Target)
+        {
+            _checkPlayerTimer -= Time.deltaTime;
+            if (_checkPlayerTimer <= 0.0f)
+            {
+                _checkPlayerTimer += _checkPlayerTime;
+                CheckForPlayer();
+            }
+        }
+
         _currentState?.ExecuteBehaviour();
     }
 
-    public void ChangeState(string newStateName)
+    public void ChangeState(AIBehavior newState)
     {
-        if (!Behaviors.ContainsKey(newStateName))
-        {
-            Debug.LogError($"State \"{newStateName}\" not found");
-            return;
-        }
-        AIBehavior newState = Behaviors[newStateName];
         if (_currentState != newState)
         {
             _currentState?.ExitBehaviour();
             _currentState = newState;
             _currentState?.Initialize(gameObject);
+        }
+    }
+
+    private void CheckForPlayer()
+    {
+        Collider2D[] collider2Ds =
+            Physics2D.OverlapCircleAll(transform.position, _enemy.ViewRange, LayerMask.GetMask("Player"));
+        if (collider2Ds.Length > 0)
+        {
+            foreach (var coll2D in collider2Ds)
+            {
+                Vector3 targetDirection = coll2D.transform.position - transform.position;
+                float angle = Vector3.Angle(_enemy.Direction, targetDirection);
+                if (angle > _enemy.ViewAngle / 2.0f + 10.0f) break;
+                PlayerController pc = coll2D.GetComponent<PlayerController>();
+                if (pc)
+                {
+                    Target = pc.transform;
+                    ChangeState(new ChaseBehaviour());
+                }
+            }
         }
     }
 }

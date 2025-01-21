@@ -14,4 +14,6 @@ public class EnemyData : ScriptableObject
     public float ViewRange;
     [Range(0, 360)]
     public float ViewAngle;
+
+    public float RadiusChase;
 }

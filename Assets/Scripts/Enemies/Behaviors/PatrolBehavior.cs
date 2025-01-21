@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Patrol Behavior", menuName = "Scriptable Objects/Patrol Behavior")]
 public class PatrolBehavior : AIBehavior
 {
     public override void Initialize(GameObject npc)
@@ -9,7 +8,7 @@ public class PatrolBehavior : AIBehavior
         if (_enemy)
         {
             _enemy.Agent.SetDestination(_enemy.WayPoints[_enemy.IndexDestination]);
-            _enemy.GetComponent<SpriteRenderer>().color = Color.red;
+            _enemy.GetComponent<SpriteRenderer>().color = Color.blue;
         }
     }
 
@@ -35,9 +34,9 @@ public class PatrolBehavior : AIBehavior
         {
             return;
         }
-
         _enemy.IndexDestination = _enemy.IndexDestination == _enemy.WayPoints.Count - 1 ? 0 : _enemy.IndexDestination + 1;
-        _owner.GetComponent<AIStateMachine>().ChangeState("Searching");
+        Debug.Log("end patrol");
+        _owner.GetComponent<AIStateMachine>().ChangeState(new SearchingBehavior());
         // _enemy.ChangeState(new SearchOnPlaceState(_enemy)); 
     }
 }

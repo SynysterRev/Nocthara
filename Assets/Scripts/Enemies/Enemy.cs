@@ -39,6 +39,7 @@ public class Enemy : MonoBehaviour, IDamageable
     public NavMeshAgent Agent { get; private set; } = null;
     public float ViewRange => Data.ViewRange;
     public float ViewAngle => Data.ViewAngle;
+    public float RadiusChase => Data.RadiusChase;
 
     private void Awake()
     {
@@ -49,6 +50,7 @@ public class Enemy : MonoBehaviour, IDamageable
             Speed = Data.Speed
         };
         Agent = GetComponent<NavMeshAgent>();
+        Agent.speed = Data.Speed;
         Agent.updateRotation = false;
         Agent.updateUpAxis = false;
     }
