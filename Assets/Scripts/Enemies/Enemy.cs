@@ -67,7 +67,7 @@ public class Enemy : MonoBehaviour, IDamageable
         
     }
 
-    public void Damage(int damage)
+    public void TakeDamage(int damage)
     {
         _stats.Health -= damage;
         if (_stats.Health <= 0)
@@ -82,7 +82,15 @@ public class Enemy : MonoBehaviour, IDamageable
         //temporary
         Destroy(gameObject);
     }
-    
+
+    // private void OnTriggerEnter2D(Collider2D other)
+    // {
+    //     if (other.GetComponent<PlayerController>() != null)
+    //     {
+    //         other.GetComponent<IDamageable>().Damage(_stats.Damage);
+    //     }
+    // }
+
     public Vector3 DirFromAngle(float angleInDegrees)
     {
         //move cone in direction of enemy movement

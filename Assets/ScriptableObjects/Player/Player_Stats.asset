@@ -16,3 +16,5 @@ MonoBehaviour:
   MaxHealth: 5
   Mana: 10
   MaxMana: 10
+  Speed: 4
+  InvulnerabilityTime: 0.5

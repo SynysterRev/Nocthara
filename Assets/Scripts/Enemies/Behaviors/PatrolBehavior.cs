@@ -35,7 +35,6 @@ public class PatrolBehavior : AIBehavior
             return;
         }
         _enemy.IndexDestination = _enemy.IndexDestination == _enemy.WayPoints.Count - 1 ? 0 : _enemy.IndexDestination + 1;
-        Debug.Log("end patrol");
         _owner.GetComponent<AIStateMachine>().ChangeState(new SearchingBehavior());
         // _enemy.ChangeState(new SearchOnPlaceState(_enemy)); 
     }

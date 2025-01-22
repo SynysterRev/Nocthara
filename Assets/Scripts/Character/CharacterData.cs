@@ -7,4 +7,6 @@ public class CharacterData : ScriptableObject
     public int MaxHealth;
     public int Mana;
     public int MaxMana;
+    public float Speed;
+    public float InvulnerabilityTime;
 }

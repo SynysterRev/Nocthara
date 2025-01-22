@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Numerics;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Matrix4x4 = UnityEngine.Matrix4x4;
 using Quaternion = UnityEngine.Quaternion;
 using Vector2 = UnityEngine.Vector2;
@@ -17,7 +15,11 @@ enum State
     Attack
 }
 
-
+public struct CollisionResolve
+{
+    public bool IsColliding;
+    public GameObject CollidingObject;
+}
 
 [Serializable]
 public class AttackBox
@@ -26,11 +28,8 @@ public class AttackBox
     public float BoxOffset = 0.55f;
 }
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IDamageable
 {
-    [FormerlySerializedAs("moveSpeed")] [SerializeField]
-    private float MoveSpeed = 5f;
-    
     [SerializeField]
     private InputManager PlayerInputs;
 
@@ -52,6 +51,21 @@ public class PlayerController : MonoBehaviour
     private Vector2 _move;
 
     private State _currentState = State.Idle;
+    
+    private PlayerManager _playerManager;
+    private float _moveSpeed = 5f;
+    
+    private CollisionResolve _collisionResolve;
+
+    [Header("Damage effect")]
+    [ColorUsage(true, true)]
+    [SerializeField] 
+    private Color FlashColor;
+    [SerializeField]
+    private AnimationCurve FlashCurve;
+    private SpriteRenderer[] _spriteRenderers;
+    private Material[] _materials;
+    private Coroutine _flashCoroutine;
 
     private void OnEnable()
     {
@@ -68,12 +82,27 @@ public class PlayerController : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _baseRotation = WeaponAnchor.rotation;
         WeaponAnchor.gameObject.SetActive(false);
+        _spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
+        
+        _materials = new Material[_spriteRenderers.Length];
+        for (int i = 0; i < _spriteRenderers.Length; i++)
+        {
+            _materials[i] = _spriteRenderers[i].material;
+            _materials[i].SetColor("_FlashColor", FlashColor);
+        }
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        _playerManager = PlayerManager.Instance;
+        _moveSpeed = _playerManager.Speed;
+        _playerManager.OnDie += OnDie;
+    }
+
+    private void OnDestroy()
+    {
+        _playerManager.OnDie -= OnDie;
     }
 
     // Update is called once per frame
@@ -83,11 +112,22 @@ public class PlayerController : MonoBehaviour
         {
             _movement.Set(_move.x, _move.y);
 
-            _rb.linearVelocity = _movement.normalized * MoveSpeed;
+            _rb.linearVelocity = _movement.normalized * _moveSpeed;
         }
         UpdateAnimState();
     }
-    
+
+    private void FixedUpdate()
+    {
+        if (_collisionResolve.IsColliding)
+        {
+            _collisionResolve.IsColliding = false;
+            Vector2 direction = (transform.position - _collisionResolve.CollidingObject.transform.position).normalized;
+            _rb.AddForce(direction * 30.0f, ForceMode2D.Impulse);
+            _collisionResolve.CollidingObject = null;
+        }
+    }
+
     private void OnMove(Vector2 value)
     {
         _move = value;
@@ -107,7 +147,8 @@ public class PlayerController : MonoBehaviour
         if (_currentState != State.Dash)
         {
             _currentState = State.Dash;
-            _rb.linearVelocity = _lastFacedDirection * MoveSpeed * 4.0f;
+            // _rb.linearVelocity = _lastFacedDirection * _moveSpeed * 4.0f;
+            _rb.AddForce(_lastFacedDirection * _moveSpeed * 2.0f, ForceMode2D.Impulse);
             StartCoroutine(StartDash());
         }
     }
@@ -141,7 +182,7 @@ public class PlayerController : MonoBehaviour
             foreach (var col in colliders)
             {
                 var damageable = col.GetComponent<IDamageable>();
-                damageable?.Damage(1);
+                damageable?.TakeDamage(1);
             }
         }
     }
@@ -214,6 +255,16 @@ public class PlayerController : MonoBehaviour
         return angle;
     }
 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.GetComponent<Enemy>())
+        {
+            _collisionResolve.IsColliding = true;
+            _collisionResolve.CollidingObject = other.gameObject;
+            TakeDamage(1);
+        }
+    }
+
     public void EnableInput(bool bEnable)
     {
         if(bEnable)
@@ -237,6 +288,44 @@ public class PlayerController : MonoBehaviour
             PlayerInputs.AttackEvent -= OnAttack;
             // iM.LookEvent -= OnLook;
             // iM.InteractEvent -= OnInteract;
+        }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        if (_playerManager.CanTakeDamage)
+        {
+            _playerManager.TakeDamage(damage);
+            _flashCoroutine = StartCoroutine(DamageFlasher());
+        }
+    }
+
+    private void OnDie(int health, int maxHealth)
+    {
+        _move = Vector2.zero;
+        EnableInput(false);
+    }
+
+    private IEnumerator DamageFlasher()
+    {
+        float currentFlashAmount = 0.0f;
+        float elapsedTime = 0.0f;
+        
+        while (elapsedTime <= _playerManager.InvulnerabilityTime)
+        {
+            elapsedTime += Time.deltaTime;
+            currentFlashAmount = Mathf.Lerp(1.0f, FlashCurve.Evaluate(elapsedTime), elapsedTime / _playerManager.InvulnerabilityTime);
+            SetFlashAmount(currentFlashAmount);
+            
+            yield return null;
+        }
+    }
+
+    private void SetFlashAmount(float flashAmount)
+    {
+        for (int i = 0; i < _materials.Length; ++i)
+        {
+            _materials[i].SetFloat("_FlashAmount", flashAmount);
         }
     }
 }
