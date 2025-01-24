@@ -138,10 +138,11 @@ MonoBehaviour:
   PlayerInputs: {fileID: 11400000, guid: efb99a1863c791444b4e99bfc8c05359, type: 2}
   BoxAttack:
     BoxSize: {x: 0.8, y: 0.3}
-    BoxOffset: 0.55
+    BoxOffset: 0.6
   WeaponAnchor: {fileID: 4847927603005042664}
+  BumpForce: 5
   Animator: {fileID: 9022430930410718143}
-  FlashColor: {r: 0.735849, g: 0.05900677, b: 0.05900677, a: 1}
+  FlashColor: {r: 0.74901956, g: 0.060062893, b: 0.060062893, a: 1}
   FlashCurve:
     serializedVersion: 2
     m_Curve:
@@ -255,7 +256,7 @@ CapsuleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0.02, y: 0}
-  m_Size: {x: 0.41, y: 0.71}
+  m_Size: {x: 0.26, y: 0.71}
   m_Direction: 0
 --- !u!1 &3473033265050206469
 GameObject:

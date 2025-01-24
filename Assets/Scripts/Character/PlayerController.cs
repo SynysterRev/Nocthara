@@ -12,7 +12,8 @@ enum State
     Idle,
     Walk,
     Dash,
-    Attack
+    Attack,
+    Bump,
 }
 
 public struct CollisionResolve
@@ -30,16 +31,22 @@ public class AttackBox
 
 public class PlayerController : MonoBehaviour, IDamageable
 {
+    [Header("Input")]
     [SerializeField]
     private InputManager PlayerInputs;
 
+    [Header("Attack")]
     [SerializeField] 
     private AttackBox BoxAttack;
 
     [SerializeField] 
     private Transform WeaponAnchor;
     private Quaternion _baseRotation;
+
+    [SerializeField] 
+    private float BumpForce;
         
+    [Header("Animation")]
     [SerializeField] 
     private Animator Animator;
     private string _currentStateAnim = "";
@@ -123,9 +130,21 @@ public class PlayerController : MonoBehaviour, IDamageable
         {
             _collisionResolve.IsColliding = false;
             Vector2 direction = (transform.position - _collisionResolve.CollidingObject.transform.position).normalized;
-            _rb.AddForce(direction * 30.0f, ForceMode2D.Impulse);
+            _rb.linearVelocity = Vector2.zero;
+            // _rb.linearVelocity = direction * 5f;
+            _rb.AddForce(direction * BumpForce, ForceMode2D.Impulse);
+            _currentState = State.Bump;
             _collisionResolve.CollidingObject = null;
+            EnableInput(false);
+            StartCoroutine(Bump());
         }
+    }
+
+    private IEnumerator Bump()
+    {
+        yield return new WaitForSeconds(0.3f);
+        _rb.linearVelocity = Vector2.zero;
+        EnableInput(true);
     }
 
     private void OnMove(Vector2 value)
@@ -148,6 +167,7 @@ public class PlayerController : MonoBehaviour, IDamageable
         {
             _currentState = State.Dash;
             // _rb.linearVelocity = _lastFacedDirection * _moveSpeed * 4.0f;
+            _rb.linearVelocity = Vector2.zero;
             _rb.AddForce(_lastFacedDirection * _moveSpeed * 2.0f, ForceMode2D.Impulse);
             StartCoroutine(StartDash());
         }
@@ -176,6 +196,7 @@ public class PlayerController : MonoBehaviour, IDamageable
         var colliders = Physics2D.OverlapBoxAll(point, BoxAttack.BoxSize, angle, LayerMask.GetMask("Enemies"));
         WeaponAnchor.rotation = _baseRotation * Quaternion.AngleAxis(angle, Vector3.forward);
         WeaponAnchor.gameObject.SetActive(true);
+        _rb.linearVelocity = Vector2.zero;
         StartCoroutine(Attack());
         if (colliders.Length > 0)
         {
@@ -192,6 +213,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     {
         yield return new WaitForSeconds(0.2f);
         WeaponAnchor.gameObject.SetActive(false);
+        _currentState = _move.magnitude > 0.1f ? State.Walk : State.Idle;
     }
 
     private void OnDrawGizmosSelected()
