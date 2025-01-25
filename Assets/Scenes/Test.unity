@@ -1071,6 +1071,43 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &1100890900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1100890892}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4d13a9e49c41a8468521b1b3a66411a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FlashColor: {r: 1, g: 1, b: 1, a: 1}
+  FlashCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -10
+      outSlope: -10
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1162209734
 GameObject:
   m_ObjectHideFlags: 0
@@ -1269,12 +1306,20 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 862374316876250343, guid: 7bf064fa250a2ae4b82f9f54d818487d, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 862374316876250343, guid: 7bf064fa250a2ae4b82f9f54d818487d, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 862374316876250343, guid: 7bf064fa250a2ae4b82f9f54d818487d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 12.58
+      value: 12.729167
       objectReference: {fileID: 0}
     - target: {fileID: 862374316876250343, guid: 7bf064fa250a2ae4b82f9f54d818487d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.94
+      value: 3.8333335
       objectReference: {fileID: 0}
     - target: {fileID: 862374316876250343, guid: 7bf064fa250a2ae4b82f9f54d818487d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1312,6 +1357,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 9200634376260935979, guid: 7bf064fa250a2ae4b82f9f54d818487d, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -6009365764819241736, guid: 81da2ea3befb4db4a8153ea824e98324, type: 3}
+    - target: {fileID: 9200634376260935979, guid: 7bf064fa250a2ae4b82f9f54d818487d, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9200634376260935979, guid: 7bf064fa250a2ae4b82f9f54d818487d, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9200634376260935979, guid: 7bf064fa250a2ae4b82f9f54d818487d, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9200634376260935979, guid: 7bf064fa250a2ae4b82f9f54d818487d, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 73c424cae533f5946a99ca4535aa5ccf, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1319,6 +1384,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2028023386538049761, guid: 7bf064fa250a2ae4b82f9f54d818487d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1100890899}
+    - targetCorrespondingSourceObject: {fileID: 2028023386538049761, guid: 7bf064fa250a2ae4b82f9f54d818487d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1100890900}
   m_SourcePrefab: {fileID: 100100000, guid: 7bf064fa250a2ae4b82f9f54d818487d, type: 3}
 --- !u!1001 &2684316218928518458
 PrefabInstance:
@@ -1375,8 +1443,71 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 522473606075200276, guid: 61dce1f9f7615604eb68b24f934e3985, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2684316218928518460}
   m_SourcePrefab: {fileID: 100100000, guid: 61dce1f9f7615604eb68b24f934e3985, type: 3}
+--- !u!1 &2684316218928518459 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 522473606075200276, guid: 61dce1f9f7615604eb68b24f934e3985, type: 3}
+  m_PrefabInstance: {fileID: 2684316218928518458}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2684316218928518460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2684316218928518459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4d13a9e49c41a8468521b1b3a66411a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FlashColor: {r: 0.836478, g: 0, b: 0, a: 0}
+  FlashCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -5.882353
+      outSlope: -5.882353
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.17
+      value: 0
+      inSlope: 0.18382335
+      outSlope: 0.18382335
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.33
+      value: 1
+      inSlope: 0.18382311
+      outSlope: 0.18382311
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.5
+      value: 0
+      inSlope: -5.8823533
+      outSlope: -5.8823533
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

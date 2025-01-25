@@ -23,6 +23,8 @@ public class Enemy : MonoBehaviour, IDamageable
 
     private EnemyStat _stats;
     
+    private FlashDamage _flashDamage;
+    
     [HideInInspector]
     public bool HasReachDestination = false;
     [HideInInspector]
@@ -58,7 +60,7 @@ public class Enemy : MonoBehaviour, IDamageable
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        _flashDamage = GetComponent<FlashDamage>();
     }
 
     // Update is called once per frame
@@ -70,6 +72,7 @@ public class Enemy : MonoBehaviour, IDamageable
     public void TakeDamage(int damage)
     {
         _stats.Health -= damage;
+        _flashDamage?.PlayFlash(0.1f);
         if (_stats.Health <= 0)
         {
             _stats.Health = 0;

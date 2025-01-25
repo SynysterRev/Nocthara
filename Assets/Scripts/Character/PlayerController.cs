@@ -63,16 +63,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     private float _moveSpeed = 5f;
     
     private CollisionResolve _collisionResolve;
-
-    [Header("Damage effect")]
-    [ColorUsage(true, true)]
-    [SerializeField] 
-    private Color FlashColor;
-    [SerializeField]
-    private AnimationCurve FlashCurve;
-    private SpriteRenderer[] _spriteRenderers;
-    private Material[] _materials;
-    private Coroutine _flashCoroutine;
+    private FlashDamage _flashDamage;
 
     private void OnEnable()
     {
@@ -89,14 +80,6 @@ public class PlayerController : MonoBehaviour, IDamageable
         _rb = GetComponent<Rigidbody2D>();
         _baseRotation = WeaponAnchor.rotation;
         WeaponAnchor.gameObject.SetActive(false);
-        _spriteRenderers = GetComponentsInChildren<SpriteRenderer>();
-        
-        _materials = new Material[_spriteRenderers.Length];
-        for (int i = 0; i < _spriteRenderers.Length; i++)
-        {
-            _materials[i] = _spriteRenderers[i].material;
-            _materials[i].SetColor("_FlashColor", FlashColor);
-        }
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -105,6 +88,7 @@ public class PlayerController : MonoBehaviour, IDamageable
         _playerManager = PlayerManager.Instance;
         _moveSpeed = _playerManager.Speed;
         _playerManager.OnDie += OnDie;
+        _flashDamage = GetComponent<FlashDamage>();
     }
 
     private void OnDestroy()
@@ -318,7 +302,7 @@ public class PlayerController : MonoBehaviour, IDamageable
         if (_playerManager.CanTakeDamage)
         {
             _playerManager.TakeDamage(damage);
-            _flashCoroutine = StartCoroutine(DamageFlasher());
+            _flashDamage.PlayFlash(_playerManager.InvulnerabilityTime);
         }
     }
 
@@ -326,28 +310,5 @@ public class PlayerController : MonoBehaviour, IDamageable
     {
         _move = Vector2.zero;
         EnableInput(false);
-    }
-
-    private IEnumerator DamageFlasher()
-    {
-        float currentFlashAmount = 0.0f;
-        float elapsedTime = 0.0f;
-        
-        while (elapsedTime <= _playerManager.InvulnerabilityTime)
-        {
-            elapsedTime += Time.deltaTime;
-            currentFlashAmount = Mathf.Lerp(1.0f, FlashCurve.Evaluate(elapsedTime), elapsedTime / _playerManager.InvulnerabilityTime);
-            SetFlashAmount(currentFlashAmount);
-            
-            yield return null;
-        }
-    }
-
-    private void SetFlashAmount(float flashAmount)
-    {
-        for (int i = 0; i < _materials.Length; ++i)
-        {
-            _materials[i].SetFloat("_FlashAmount", flashAmount);
-        }
     }
 }
