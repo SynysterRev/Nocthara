@@ -5,27 +5,20 @@ public class PatrolBehavior : AIBehavior
     public override void Initialize(GameObject npc)
     {
         base.Initialize(npc);
-        if (_enemy)
-        {
-            _enemy.Agent.SetDestination(_enemy.WayPoints[_enemy.IndexDestination]);
-            _enemy.GetComponent<SpriteRenderer>().color = Color.blue;
-        }
+        if(_aiStateMachine)
+            _aiStateMachine.SetDestination(_enemy.WayPoints[_enemy.IndexDestination]);
     }
 
     public override void ExecuteBehaviour()
     {
         if (!_enemy) return;
         Patrol();
-        _enemy.Direction = _enemy.Agent.velocity.normalized;
-        if (_enemy.Direction != Vector2.zero)
-        {
-            _enemy.LastDirection = _enemy.Direction;
-        }
+        _aiStateMachine.UpdateDirection();
     }
 
     public override void ExitBehaviour()
     {
-        _enemy.GetComponent<SpriteRenderer>().color = Color.green;
+       
     }
 
     private void Patrol()

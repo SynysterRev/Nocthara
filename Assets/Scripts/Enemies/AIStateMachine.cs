@@ -12,6 +12,7 @@ public class AIStateMachine : MonoBehaviour
     private Coroutine _checkCoroutine;
 
     public Transform Target { get; set; }
+    public Animator Animator;
 
     private readonly float _checkPlayerTime = 0.3f;
     private float _checkPlayerTimer = 0.0f;
@@ -58,7 +59,7 @@ public class AIStateMachine : MonoBehaviour
             foreach (var coll2D in collider2Ds)
             {
                 Vector3 targetDirection = coll2D.transform.position - transform.position;
-                float angle = Vector3.Angle(_enemy.Direction, targetDirection);
+                float angle = Vector3.Angle(_enemy.LastDirection, targetDirection);
                 if (angle > _enemy.ViewAngle / 2.0f + 10.0f) break;
                 PlayerController pc = coll2D.GetComponent<PlayerController>();
                 if (pc)
@@ -66,6 +67,33 @@ public class AIStateMachine : MonoBehaviour
                     Target = pc.transform;
                     ChangeState(new ChaseBehaviour());
                 }
+            }
+        }
+    }
+
+    public void SetDestination(Vector3 destination)
+    {
+        _enemy.Agent.SetDestination(destination);
+        if (Animator)
+        {
+            Animator.SetBool("IsWalking", true);
+            Animator.SetFloat("MoveX", _enemy.Direction.x);
+            Animator.SetFloat("MoveY", _enemy.Direction.y);
+        }
+    }
+
+    public void UpdateDirection()
+    {
+        if (Animator)
+        {
+            _enemy.Direction = _enemy.Agent.velocity.normalized;
+            Animator.SetFloat("MoveX", _enemy.Direction.x);
+            Animator.SetFloat("MoveY", _enemy.Direction.y);
+            if (_enemy.Direction != Vector2.zero)
+            {
+                Animator.SetFloat("LastDirectionX", _enemy.Direction.x);
+                Animator.SetFloat("LastDirectionY", _enemy.Direction.y);
+                _enemy.LastDirection = _enemy.Direction;
             }
         }
     }

@@ -8,6 +8,7 @@ public class EnemyData : ScriptableObject
     public int Health;
     public int Damage;
     public float Speed;
+    public float RangeAttack;
     
     [Space(10)]
     [Header("Detection")] 

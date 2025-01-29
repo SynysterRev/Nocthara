@@ -42,6 +42,7 @@ public class Enemy : MonoBehaviour, IDamageable
     public float ViewRange => Data.ViewRange;
     public float ViewAngle => Data.ViewAngle;
     public float RadiusChase => Data.RadiusChase;
+    public float RangeAttack => Data.RangeAttack;
 
     private void Awake()
     {
@@ -97,7 +98,7 @@ public class Enemy : MonoBehaviour, IDamageable
     public Vector3 DirFromAngle(float angleInDegrees)
     {
         //move cone in direction of enemy movement
-        float angle = -Vector3.SignedAngle(Vector3.up, Direction, Vector3.forward);
+        float angle = -Vector3.SignedAngle(Vector3.up, LastDirection, Vector3.forward);
         return new Vector3(Mathf.Sin((angleInDegrees + angle) * Mathf.Deg2Rad), Mathf.Cos((angleInDegrees + angle) * Mathf.Deg2Rad),0.0f);
     }
 }
