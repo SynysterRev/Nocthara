@@ -15,6 +15,7 @@ MonoBehaviour:
   Health: 3
   Damage: 1
   Speed: 1
+  RangeAttack: 1
   ViewRange: 2
   ViewAngle: 60
   RadiusChase: 6

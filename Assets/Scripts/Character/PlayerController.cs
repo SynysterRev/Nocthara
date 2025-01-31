@@ -42,6 +42,18 @@ public class PlayerController : MonoBehaviour, IDamageable
     [SerializeField] 
     private Transform WeaponAnchor;
     private Quaternion _baseRotation;
+    
+    [Header("Movement")]
+    [SerializeField] 
+    private Transform StartBoxCast;
+    
+    [SerializeField]
+    private Vector2 BoxCastSize;
+
+    [SerializeField] 
+    private float DashTime = 0.2f;
+    [SerializeField] 
+    private float DashSpeed = 5.0f;
 
     [SerializeField] 
     private float BumpForce;
@@ -52,9 +64,12 @@ public class PlayerController : MonoBehaviour, IDamageable
     private string _currentStateAnim = "";
     private List<string> _currentStateNames = new List<string>{ "_up", "_leftup", "_left", "_leftdown", "_down", "_rightdown", "_right", "_rightup"  };
     
+    [Header("Debug")]
+    [SerializeField]
+    private bool DebugMode;
+    
     private Vector2 _movement;
     private Vector2 _lastFacedDirection = Vector2.down;
-    private Rigidbody2D _rb;
     private Vector2 _move;
 
     private State _currentState = State.Idle;
@@ -77,7 +92,6 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private void Awake()
     {
-        _rb = GetComponent<Rigidbody2D>();
         _baseRotation = WeaponAnchor.rotation;
         WeaponAnchor.gameObject.SetActive(false);
     }
@@ -99,13 +113,27 @@ public class PlayerController : MonoBehaviour, IDamageable
     // Update is called once per frame
     void Update()
     {
+        TryMove();
+        UpdateAnimState();
+    }
+
+    private void TryMove()
+    {
         if (CanMove())
         {
-            _movement.Set(_move.x, _move.y);
-
-            _rb.linearVelocity = _movement.normalized * _moveSpeed;
+            Vector2 moveX = new Vector2(_move.x, 0.0f);
+            if (!CheckForCollision(_moveSpeed, moveX))
+            {
+                // _movement.Set(_move.x, _move.y);
+                transform.Translate(moveX * (_moveSpeed * Time.deltaTime), Space.World);
+            }
+            Vector2 moveY = new Vector2(0.0f, _move.y);
+            if (!CheckForCollision(_moveSpeed, moveY))
+            {
+                // _movement.Set(_move.x, _move.y);
+                transform.Translate(moveY * (_moveSpeed * Time.deltaTime), Space.World);
+            }
         }
-        UpdateAnimState();
     }
 
     private void FixedUpdate()
@@ -114,29 +142,48 @@ public class PlayerController : MonoBehaviour, IDamageable
         {
             _collisionResolve.IsColliding = false;
             Vector2 direction = (transform.position - _collisionResolve.CollidingObject.transform.position).normalized;
-            _rb.linearVelocity = Vector2.zero;
-            // _rb.linearVelocity = direction * 5f;
-            _rb.AddForce(direction * BumpForce, ForceMode2D.Impulse);
+            transform.Translate(direction * BumpForce, Space.World);
             _currentState = State.Bump;
             _collisionResolve.CollidingObject = null;
             EnableInput(false);
             StartCoroutine(Bump());
         }
     }
+    
+    private bool CanMove()
+    {
+        return _currentState is State.Walk or State.Idle;
+    }
+
+    private bool CheckForCollision(float speed, Vector2 direction)
+    {
+        float distance = speed * Time.deltaTime;
+        Vector2 newPosition = (Vector2)StartBoxCast.position + direction * distance;
+
+        RaycastHit2D hit = Physics2D.BoxCast(newPosition, BoxCastSize, 0, direction,
+            distance, ~LayerMask.GetMask("Player"));
+        if (DebugMode)
+            DrawDebug();
+        if (hit.collider)
+        {
+            return true;
+        }
+        return false;
+    }
 
     private IEnumerator Bump()
     {
         yield return new WaitForSeconds(0.3f);
-        _rb.linearVelocity = Vector2.zero;
         EnableInput(true);
     }
 
     private void OnMove(Vector2 value)
     {
         _move = value;
+        _move.Normalize();
         if (value.magnitude > 0)
         {
-            _lastFacedDirection = value.normalized;
+            _lastFacedDirection = value;
             _currentState = State.Walk;
         }
         else
@@ -150,25 +197,46 @@ public class PlayerController : MonoBehaviour, IDamageable
         if (_currentState != State.Dash)
         {
             _currentState = State.Dash;
-            // _rb.linearVelocity = _lastFacedDirection * _moveSpeed * 4.0f;
-            _rb.linearVelocity = Vector2.zero;
-            _rb.AddForce(_lastFacedDirection * _moveSpeed * 2.0f, ForceMode2D.Impulse);
             StartCoroutine(StartDash());
         }
     }
-
-    private bool CanMove()
-    {
-        return _currentState is State.Walk or State.Idle;
-    }
-
+    
     IEnumerator StartDash()
     {
-        yield return new WaitForSeconds(0.2f);
-        if( _move.magnitude > 0.1f )
-            _currentState = State.Walk;
-        else 
-            _currentState = State.Idle;
+        float timer = 0.0f;
+        Vector2 direction = _lastFacedDirection;
+        while (timer < DashTime)
+        {
+            timer += Time.deltaTime;
+            if (!CheckForCollision(DashSpeed, direction))
+                transform.Translate(direction * (Time.deltaTime * DashSpeed), Space.World);
+            yield return null;
+        }
+        
+        _currentState = _move.magnitude > 0.1f ? State.Walk : State.Idle;
+    }
+
+    private void DrawDebug()
+    {
+        Vector2 newPosition = (Vector2)StartBoxCast.position + _move * _moveSpeed * Time.deltaTime;
+        // Afficher un rectangle représentant la BoxCast
+        Debug.DrawLine(StartBoxCast.position, StartBoxCast.position + new Vector3(_lastFacedDirection.x, _lastFacedDirection.y) * _moveSpeed * Time.deltaTime, Color.red);
+
+// Calculer les coins de la boîte
+        Vector2 boxCenter = newPosition;
+        Vector2 boxSize = new Vector2(0.3f, 0.1f); // Remplacer par la taille de ta boîte
+        float angle = GetAngle(_lastFacedDirection); // L'angle de rotation de la boîte
+
+// Dessiner les bords de la boîte
+        Vector2 topLeft = new Vector2(-boxSize.x / 2, boxSize.y / 2) + boxCenter;
+        Vector2 topRight =  new Vector2(boxSize.x / 2, boxSize.y / 2) + boxCenter;
+        Vector2 bottomLeft = new Vector2(-boxSize.x / 2, -boxSize.y / 2) + boxCenter;
+        Vector2 bottomRight =  new Vector2(boxSize.x / 2, -boxSize.y / 2) + boxCenter;
+
+        Debug.DrawLine(topLeft, topRight, Color.blue);  // Dessiner la ligne supérieure
+        Debug.DrawLine(topRight, bottomRight, Color.blue); // Dessiner la ligne droite
+        Debug.DrawLine(bottomRight, bottomLeft, Color.blue); // Dessiner la ligne inférieure
+        Debug.DrawLine(bottomLeft, topLeft, Color.blue);  // Dessiner la ligne gauche
     }
 
     private void OnAttack()
@@ -180,7 +248,6 @@ public class PlayerController : MonoBehaviour, IDamageable
         var colliders = Physics2D.OverlapBoxAll(point, BoxAttack.BoxSize, angle, LayerMask.GetMask("Enemies"));
         WeaponAnchor.rotation = _baseRotation * Quaternion.AngleAxis(angle, Vector3.forward);
         WeaponAnchor.gameObject.SetActive(true);
-        _rb.linearVelocity = Vector2.zero;
         StartCoroutine(Attack());
         if (colliders.Length > 0)
         {
