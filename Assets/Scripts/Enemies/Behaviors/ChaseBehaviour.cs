@@ -19,6 +19,7 @@ public class ChaseBehaviour : AIBehavior
         }
         else if (distance <= _enemy.RangeAttack)
         {
+            _aiStateMachine.StopMove();
             _aiStateMachine.ChangeState(new AttackBehavior());
         }
         else

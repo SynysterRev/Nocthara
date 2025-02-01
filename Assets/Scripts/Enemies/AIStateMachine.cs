@@ -74,12 +74,19 @@ public class AIStateMachine : MonoBehaviour
     public void SetDestination(Vector3 destination)
     {
         _enemy.Agent.SetDestination(destination);
+        _enemy.Agent.isStopped = false;
         if (Animator)
         {
             Animator.SetBool("IsWalking", true);
             Animator.SetFloat("MoveX", _enemy.Direction.x);
             Animator.SetFloat("MoveY", _enemy.Direction.y);
         }
+    }
+
+    public void StopMove()
+    {
+        _enemy.Agent.velocity = Vector3.zero;
+        _enemy.Agent.isStopped = true;
     }
 
     public void UpdateDirection()
