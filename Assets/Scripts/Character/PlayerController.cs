@@ -253,7 +253,7 @@ public class PlayerController : MonoBehaviour, IDamageable
         {
             foreach (var col in colliders)
             {
-                var damageable = col.GetComponent<IDamageable>();
+                var damageable = col.GetComponentInParent<IDamageable>();
                 damageable?.TakeDamage(1);
             }
         }

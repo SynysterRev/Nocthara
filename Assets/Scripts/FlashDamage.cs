@@ -25,12 +25,6 @@ public class FlashDamage : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void PlayFlash(float flashTime)
     {
         _flashCoroutine = StartCoroutine(DamageFlasher(flashTime));
