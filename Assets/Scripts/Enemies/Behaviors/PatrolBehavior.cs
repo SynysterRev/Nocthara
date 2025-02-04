@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[System.Serializable]
 public class PatrolBehavior : AIBehavior
 {
     public override void Initialize(GameObject npc)

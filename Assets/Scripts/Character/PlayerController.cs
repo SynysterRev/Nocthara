@@ -71,6 +71,8 @@ public class PlayerController : MonoBehaviour, IDamageable
     private Vector2 _movement;
     private Vector2 _lastFacedDirection = Vector2.down;
     private Vector2 _move;
+    
+    public Vector2 LastFacedDirection => _lastFacedDirection;
 
     private State _currentState = State.Idle;
     
@@ -259,6 +261,19 @@ public class PlayerController : MonoBehaviour, IDamageable
         }
     }
 
+    private void OnInteract()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(StartBoxCast.position, _lastFacedDirection.normalized, 3.0f, ~LayerMask.GetMask("Player"));
+        if (hit.collider)
+        {
+            IInteractable interactable = hit.collider.GetComponent<IInteractable>();
+            if (interactable != null)
+            {        
+                interactable.TryInteract(gameObject, hit.collider.gameObject);
+            }
+        }
+    }
+
     // Temporary
     IEnumerator Attack()
     {
@@ -330,7 +345,7 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.GetComponent<Enemy>())
+        if (other.GetComponentInParent<Enemy>())
         {
             _collisionResolve.IsColliding = true;
             _collisionResolve.CollidingObject = other.gameObject;
@@ -349,7 +364,7 @@ public class PlayerController : MonoBehaviour, IDamageable
             PlayerInputs.DashEvent += OnDash;
             PlayerInputs.AttackEvent += OnAttack;
             // iM.LookEvent += OnLook;
-            // iM.InteractEvent += OnInteract;
+            PlayerInputs.InteractEvent += OnInteract;
         }
         else
         {
@@ -359,8 +374,8 @@ public class PlayerController : MonoBehaviour, IDamageable
             PlayerInputs.MoveEvent -= OnMove;
             PlayerInputs.DashEvent -= OnDash;
             PlayerInputs.AttackEvent -= OnAttack;
+            PlayerInputs.InteractEvent -= OnInteract;
             // iM.LookEvent -= OnLook;
-            // iM.InteractEvent -= OnInteract;
         }
     }
 

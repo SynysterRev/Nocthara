@@ -16,10 +16,13 @@ public class EnemyStat
     // public float ViewAngle;
 }
 
-public class Enemy : MonoBehaviour, IDamageable
+public class Enemy : MonoBehaviour, IDamageable, IAttack
 {
     [SerializeField] 
     private EnemyData Data;
+    [SerializeReference]
+    public AIBehavior test;
+
 
     private EnemyStat _stats;
     
@@ -100,5 +103,10 @@ public class Enemy : MonoBehaviour, IDamageable
         //move cone in direction of enemy movement
         float angle = -Vector3.SignedAngle(Vector3.up, LastDirection, Vector3.forward);
         return new Vector3(Mathf.Sin((angleInDegrees + angle) * Mathf.Deg2Rad), Mathf.Cos((angleInDegrees + angle) * Mathf.Deg2Rad),0.0f);
+    }
+
+    public void DoAttack()
+    {
+        
     }
 }

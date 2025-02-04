@@ -10,6 +10,7 @@ public class InputManager : ScriptableObject, PlayerInput_Actions.IPlayerActions
     public event UnityAction<Vector2> MoveEvent;
     public event UnityAction DashEvent;
     public event UnityAction AttackEvent;
+    public event UnityAction InteractEvent;
 
     private PlayerInput_Actions _playerInput;
 
@@ -40,12 +41,16 @@ public class InputManager : ScriptableObject, PlayerInput_Actions.IPlayerActions
 
     public void OnAttack(InputAction.CallbackContext context)
     {
-        if (context.phase is InputActionPhase.Performed)
+        if (context.phase is InputActionPhase.Started)
             AttackEvent?.Invoke();
     }
 
     public void OnInteract(InputAction.CallbackContext context)
     {
+        if (context.phase is InputActionPhase.Started)
+        {
+            InteractEvent?.Invoke();
+        }
     }
 
     public void OnCrouch(InputAction.CallbackContext context)
@@ -66,7 +71,7 @@ public class InputManager : ScriptableObject, PlayerInput_Actions.IPlayerActions
 
     public void OnDash(InputAction.CallbackContext context)
     {
-        if (context.phase is InputActionPhase.Performed)
+        if (context.phase is InputActionPhase.Started)
             DashEvent?.Invoke();
     }
 }

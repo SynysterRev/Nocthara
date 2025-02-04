@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[System.Serializable]
 public class AIBehavior
 {
     protected GameObject _owner;

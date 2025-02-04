@@ -9,6 +9,11 @@ public class AIStateMachine : MonoBehaviour
     private AIBehavior _currentState;
     private Enemy _enemy;
 
+    public AIBehavior test;
+    
+    [SerializeField]
+    public PatrolBehavior chaseBehaviour;
+
     private Coroutine _checkCoroutine;
 
     public Transform Target { get; set; }
@@ -16,6 +21,12 @@ public class AIStateMachine : MonoBehaviour
 
     private readonly float _checkPlayerTime = 0.3f;
     private float _checkPlayerTimer = 0.0f;
+    
+    [SerializeReference]
+    public AIBehavior _currentAIBehavior = new PatrolBehavior();
+    
+    [SerializeField]
+    public AIBehavior _currentAIaaBehavior = new PatrolBehavior();
 
     private void Start()
     {
