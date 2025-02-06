@@ -6,6 +6,7 @@ using UnityEngine;
 public class Chest : InteractObject
 {
     public SpriteAnimator SpriteAnimator;
+    private bool _isOpen;
     void Start()
     {
         SpriteAnimator = GetComponent<SpriteAnimator>();
@@ -13,11 +14,10 @@ public class Chest : InteractObject
     
     protected override void Interact(GameObject player, GameObject target)
     {
-        SpriteAnimator.Play("opening", false);
-    }
-
-    public void Toast()
-    {
-        Debug.Log("Toast");
+        if (!_isOpen)
+        {
+            _isOpen = true;
+            SpriteAnimator.Play("opening", false);
+        }
     }
 }
