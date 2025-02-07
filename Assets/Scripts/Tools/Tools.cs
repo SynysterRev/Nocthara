@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Tools
 {
-    public float GetAnimationLength(Animator animator, string animationName)
+    public static float GetAnimationLength(Animator animator, string animationName)
     {
         RuntimeAnimatorController ac = animator.runtimeAnimatorController;	//Get Animator controller
         foreach (var t in ac.animationClips)

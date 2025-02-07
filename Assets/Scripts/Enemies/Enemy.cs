@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Serialization;
@@ -20,8 +19,6 @@ public class Enemy : MonoBehaviour, IDamageable, IAttack
 {
     [SerializeField] 
     private EnemyData Data;
-    [SerializeReference]
-    public AIBehavior test;
 
 
     private EnemyStat _stats;
@@ -30,11 +27,6 @@ public class Enemy : MonoBehaviour, IDamageable, IAttack
     
     [HideInInspector]
     public bool HasReachDestination = false;
-    [HideInInspector]
-    public int IndexDestination = 0;
-    [HideInInspector]
-    [SerializeField]
-    public List<Vector2> WayPoints;
     
     [HideInInspector]
     public Vector2 Direction = Vector2.down;

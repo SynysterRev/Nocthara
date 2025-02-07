@@ -6,34 +6,34 @@ using UnityEngine;
 
 public class AIStateMachine : MonoBehaviour
 {
-    private AIBehavior _currentState;
+    [SerializeField] 
+    private AIState StartState;
+
+    private AIState _currentState;
     private Enemy _enemy;
 
-    public AIBehavior test;
-    
-    [SerializeField]
-    public PatrolBehavior chaseBehaviour;
-
     private Coroutine _checkCoroutine;
+    private Dictionary<Type, Component> _cachedComponents;
 
     public Transform Target { get; set; }
     public Animator Animator;
 
     private readonly float _checkPlayerTime = 0.3f;
     private float _checkPlayerTimer = 0.0f;
-    
-    [SerializeReference]
-    public AIBehavior _currentAIBehavior = new PatrolBehavior();
-    
-    [SerializeField]
-    public AIBehavior _currentAIaaBehavior = new PatrolBehavior();
+
+    public bool IsStaying { get; set; }
+    private Coroutine _stayCoroutine;
+
+    private void Awake()
+    {
+        _cachedComponents = new Dictionary<Type, Component>();
+    }
 
     private void Start()
     {
         _enemy = GetComponent<Enemy>();
-        _currentState = new PatrolBehavior();
-        _currentState?.Initialize(gameObject);
         _checkPlayerTimer = _checkPlayerTime;
+        _currentState = StartState;
     }
 
     private void Update()
@@ -48,16 +48,14 @@ public class AIStateMachine : MonoBehaviour
             }
         }
 
-        _currentState?.ExecuteBehaviour();
+        _currentState?.ExecuteBehaviour(this);
     }
 
-    public void ChangeState(AIBehavior newState)
+    public void ChangeState(AIState newState)
     {
-        if (_currentState != newState)
+        if (_currentState != null && _currentState != newState)
         {
-            _currentState?.ExitBehaviour();
             _currentState = newState;
-            _currentState?.Initialize(gameObject);
         }
     }
 
@@ -76,7 +74,7 @@ public class AIStateMachine : MonoBehaviour
                 if (pc)
                 {
                     Target = pc.transform;
-                    ChangeState(new ChaseBehaviour());
+                    // ChangeState(new ChaseBehaviour());
                 }
             }
         }
@@ -114,5 +112,38 @@ public class AIStateMachine : MonoBehaviour
                 _enemy.LastDirection = _enemy.Direction;
             }
         }
+    }
+
+    public new T GetComponent<T>() where T : Component
+    {
+        if (_cachedComponents.ContainsKey(typeof(T)))
+            return _cachedComponents[typeof(T)] as T;
+
+        var component = base.GetComponent<T>();
+        if (component != null)
+        {
+            _cachedComponents.Add(typeof(T), component);
+        }
+
+        return component;
+    }
+
+    public void StartStayingCoroutine()
+    {
+        if (_stayCoroutine == null)
+        {
+            Animator.SetBool("IsWalking", false);
+            Animator.SetFloat("MoveX", _enemy.LastDirection.x);
+            Animator.SetFloat("MoveY", _enemy.LastDirection.y);
+            _stayCoroutine = StartCoroutine(StayCoroutine(1.0f));
+        }
+    }
+
+    private IEnumerator StayCoroutine(float duration)
+    {
+        IsStaying = true;
+        yield return new WaitForSeconds(duration);
+        IsStaying = false;
+        _stayCoroutine = null;
     }
 }
