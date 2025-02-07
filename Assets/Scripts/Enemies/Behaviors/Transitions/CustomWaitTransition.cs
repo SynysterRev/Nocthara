@@ -7,7 +7,6 @@ public class CustomWaitTransition : BehaviorTransition
     {
         if (Decision.Decide(stateMachine))
         {
-            Debug.Log("go patrol");
             stateMachine.StartStayingCoroutine();
             stateMachine.ChangeState(Behavior);
         }

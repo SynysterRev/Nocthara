@@ -74,7 +74,6 @@ public class AIStateMachine : MonoBehaviour
                 if (pc)
                 {
                     Target = pc.transform;
-                    // ChangeState(new ChaseBehaviour());
                 }
             }
         }

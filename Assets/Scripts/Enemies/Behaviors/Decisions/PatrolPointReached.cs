@@ -7,7 +7,6 @@ public class PatrolPointReached : Decision
     {
         var wayPoint = stateMachine.GetComponent<WayPoint>();
         var agent = stateMachine.GetComponent<Enemy>().Agent;
-        Debug.Log($"PatrolPointReached {wayPoint.HasReachedWayPoint(agent)}");
         return wayPoint.HasReachedWayPoint(agent);
     }
 }

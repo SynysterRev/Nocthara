@@ -10,7 +10,6 @@ public class PatrolAction : ActionBehavior
         var wayPoint = stateMachine.GetComponent<WayPoint>();
         if (!enemy.Agent.hasPath)
         {
-            Debug.Log("new patrol");
             stateMachine.SetDestination(wayPoint.GetWayPoint());
         }
     }
