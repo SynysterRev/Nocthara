@@ -6,8 +6,7 @@ using UnityEngine;
 
 public class AIStateMachine : MonoBehaviour
 {
-    [SerializeField] 
-    private AIState StartState;
+    [SerializeField] private AIState StartState;
 
     private AIState _currentState;
     private Enemy _enemy;
@@ -15,14 +14,37 @@ public class AIStateMachine : MonoBehaviour
     private Coroutine _checkCoroutine;
     private Dictionary<Type, Component> _cachedComponents;
 
-    public Transform Target { get; set; }
+    public Transform Target
+    {
+        get => GetParameter<Transform>(nameof(Target));
+        set => SetParameter(nameof(Target), value);
+    }
     public Animator Animator;
 
     private readonly float _checkPlayerTime = 0.3f;
     private float _checkPlayerTimer = 0.0f;
 
-    public bool IsStaying { get; set; }
+    public bool IsStaying
+    {
+        get => GetParameter<bool>(nameof(IsStaying));
+        set => SetParameter(nameof(IsStaying), value);
+    }
+
     private Coroutine _stayCoroutine;
+
+    private Dictionary<string, object> _parameters = new Dictionary<string, object>();
+    public void SetParameter<T>(string key, T value) => _parameters[key] = value;
+
+    public T GetParameter<T>(string key)
+    {
+        if (_parameters.TryGetValue(key, out var value) && value is T typedValue)
+        {
+            return typedValue;
+        }
+
+        return default;
+    }
+
 
     private void Awake()
     {
