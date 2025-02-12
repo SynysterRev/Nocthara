@@ -4,8 +4,8 @@ using Vector2 = UnityEngine.Vector2;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
 
-[CreateAssetMenu(fileName = "InputManager", menuName = "Data/Input Manager")]
-public class InputManager : ScriptableObject, PlayerInput_Actions.IPlayerActions
+[CreateAssetMenu(fileName = "InputManager", menuName = "Data/PlayerInputManager")]
+public class PlayerInputManager : ScriptableObject, PlayerInput_Actions.IPlayerActions
 {
     public event UnityAction<Vector2> MoveEvent;
     public event UnityAction DashEvent;
@@ -19,14 +19,22 @@ public class InputManager : ScriptableObject, PlayerInput_Actions.IPlayerActions
         if (_playerInput == null)
         {
             _playerInput = new PlayerInput_Actions();
-            _playerInput.Enable();
+            _playerInput.Player.Enable();
             _playerInput.Player.SetCallbacks(this);
         }
     }
 
     private void OnDisable()
     {
-        _playerInput.Disable();
+        _playerInput.Player.Disable();
+    }
+
+    public void EnableInput(bool enable)
+    {
+        if (enable)
+            _playerInput.Player.Enable();
+        else 
+            _playerInput.Player.Disable();
     }
 
     public void OnMove(InputAction.CallbackContext context)

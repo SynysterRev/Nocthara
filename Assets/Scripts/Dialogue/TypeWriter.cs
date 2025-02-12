@@ -5,39 +5,29 @@ using UnityEngine.Serialization;
 
 public class TypeWriter : MonoBehaviour
 {
-    [FormerlySerializedAs("m_TextSpeed")] [SerializeField]
-    private float _textSpeed = 0.018f;
-    [SerializeField]
-    private TextMeshProUGUI DialogueText;
-    [SerializeField]
-    private TextMeshProUGUI CharacterName;
+    public delegate void TypeWriterEnd();
+
+    public event TypeWriterEnd OnTypeWriterEnd;
+
+    [SerializeField] private float TextSpeed = 0.018f;
+    [SerializeField] private TextMeshProUGUI DialogueText;
+    [SerializeField] private TextMeshProUGUI CharacterName;
     private const string _alphaMark = "alpha=#00";
     private string _textToDisplay;
     private string _finalText;
-    private bool _skipTextAnim = false;
     private float _numberCharacterToDisplay = 0f;
     private bool _updateText = false;
     private int _textLength = 0;
     private Coroutine _writingCoroutine;
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 
     public void StartTypeWriter(string textToDisplay, string characterName)
     {
         CharacterName.text = characterName;
         _finalText = textToDisplay;
         _textLength = _finalText.Length;
-        if(_skipTextAnim)
-        {
-            EndDisplayText();
-            return;
-        }
+        _textToDisplay = "";
+        _numberCharacterToDisplay = 0;
         ParseText();
-       
     }
 
     private void ParseText()
@@ -51,12 +41,12 @@ public class TypeWriter : MonoBehaviour
         _updateText = true;
         _writingCoroutine = StartCoroutine(StartWriting());
     }
-    
+
     private IEnumerator StartWriting()
     {
         while (_updateText)
         {
-            _numberCharacterToDisplay += Time.deltaTime / _textSpeed;
+            _numberCharacterToDisplay += Time.deltaTime / TextSpeed;
             if (_numberCharacterToDisplay >= _textLength)
             {
                 EndDisplayText();
@@ -65,12 +55,13 @@ public class TypeWriter : MonoBehaviour
             {
                 UpdateText();
             }
+
             yield return null;
         }
     }
 
     private void UpdateText()
-    {      
+    {
         _textToDisplay =
             $"{_finalText.Substring(0, (int)_numberCharacterToDisplay)}<{_alphaMark}>{_finalText.Substring((int)_numberCharacterToDisplay)}";
         if (DialogueText)
@@ -79,15 +70,21 @@ public class TypeWriter : MonoBehaviour
         }
     }
 
+    public void SkipToEnd()
+    {
+        Debug.Log("skip to end");
+        EndDisplayText();
+    }
+
     private void EndDisplayText()
     {
         if (DialogueText)
         {
             DialogueText.SetText(_finalText);
         }
-        _skipTextAnim = false;
+        Debug.Log("end display");
         _updateText = false;
+        OnTypeWriterEnd?.Invoke();
         StopCoroutine(_writingCoroutine);
     }
-
 }

@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c843654c76d768d49affc5e204632fa4, type: 3}
   m_Name: TestDialogue
   m_EditorClassIdentifier: 
-  CharacterName: Paup
-  DialogueText: "Paup est partie au travail malgr\xE9 qu'elle avait la grosse flemme
-    sa m\xE8re.Paup est partie au travail malgr\xE9 sa tqu'elle avait la grosse flemme
-    sa m\xE8re "
+  Dialogues:
+  - CharacterName: Paup
+    DialogueText: "On voit des boitiers de merde dans cette soci\xE9t\xE9."
+  - CharacterName: Paup
+    DialogueText: "J'esp\xE8re bient\xF4t pouvoir en changer."
+  - CharacterName: Mimimon
+    DialogueText: Courage jeune Pauppy.

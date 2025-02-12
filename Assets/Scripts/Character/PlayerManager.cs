@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -31,6 +32,10 @@ public class PlayerManager : Singleton<PlayerManager>
     private CharacterStats _stats;
     private Coroutine _takeDamageCoroutine;
 
+    private PlayerController _playerController;
+    
+    public PlayerController PlayerController => _playerController;
+
     protected override void Awake()
     {
         base.Awake();
@@ -44,7 +49,12 @@ public class PlayerManager : Singleton<PlayerManager>
             InvulnerabilityTime = CharacterData.InvulnerabilityTime,
         };
     }
-    
+
+    private void Start()
+    {
+        _playerController = FindFirstObjectByType<PlayerController>();
+    }
+
     public bool IsDead => _stats.Health <= 0;
 
     public void TakeDamage(int damage)

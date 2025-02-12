@@ -1012,6 +1012,34 @@ public partial class @PlayerInput_Actions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Dialogue"",
+            ""id"": ""ef4ac74c-89e0-4f36-a8a1-cf04b5c89754"",
+            ""actions"": [
+                {
+                    ""name"": ""NextDialogue"",
+                    ""type"": ""Button"",
+                    ""id"": ""875fd5f5-df59-4306-8ed1-33cb98786cf4"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""9945f3ba-4671-4b34-ae55-81a8573e253a"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""NextDialogue"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -1100,12 +1128,16 @@ public partial class @PlayerInput_Actions: IInputActionCollection2, IDisposable
         m_UI_ScrollWheel = m_UI.FindAction("ScrollWheel", throwIfNotFound: true);
         m_UI_TrackedDevicePosition = m_UI.FindAction("TrackedDevicePosition", throwIfNotFound: true);
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
+        // Dialogue
+        m_Dialogue = asset.FindActionMap("Dialogue", throwIfNotFound: true);
+        m_Dialogue_NextDialogue = m_Dialogue.FindAction("NextDialogue", throwIfNotFound: true);
     }
 
     ~@PlayerInput_Actions()
     {
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, PlayerInput_Actions.Player.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, PlayerInput_Actions.UI.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Dialogue.enabled, "This will cause a leak and performance issues, PlayerInput_Actions.Dialogue.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -1391,6 +1423,52 @@ public partial class @PlayerInput_Actions: IInputActionCollection2, IDisposable
         }
     }
     public UIActions @UI => new UIActions(this);
+
+    // Dialogue
+    private readonly InputActionMap m_Dialogue;
+    private List<IDialogueActions> m_DialogueActionsCallbackInterfaces = new List<IDialogueActions>();
+    private readonly InputAction m_Dialogue_NextDialogue;
+    public struct DialogueActions
+    {
+        private @PlayerInput_Actions m_Wrapper;
+        public DialogueActions(@PlayerInput_Actions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @NextDialogue => m_Wrapper.m_Dialogue_NextDialogue;
+        public InputActionMap Get() { return m_Wrapper.m_Dialogue; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(DialogueActions set) { return set.Get(); }
+        public void AddCallbacks(IDialogueActions instance)
+        {
+            if (instance == null || m_Wrapper.m_DialogueActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_DialogueActionsCallbackInterfaces.Add(instance);
+            @NextDialogue.started += instance.OnNextDialogue;
+            @NextDialogue.performed += instance.OnNextDialogue;
+            @NextDialogue.canceled += instance.OnNextDialogue;
+        }
+
+        private void UnregisterCallbacks(IDialogueActions instance)
+        {
+            @NextDialogue.started -= instance.OnNextDialogue;
+            @NextDialogue.performed -= instance.OnNextDialogue;
+            @NextDialogue.canceled -= instance.OnNextDialogue;
+        }
+
+        public void RemoveCallbacks(IDialogueActions instance)
+        {
+            if (m_Wrapper.m_DialogueActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IDialogueActions instance)
+        {
+            foreach (var item in m_Wrapper.m_DialogueActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_DialogueActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public DialogueActions @Dialogue => new DialogueActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     public InputControlScheme KeyboardMouseScheme
     {
@@ -1460,5 +1538,9 @@ public partial class @PlayerInput_Actions: IInputActionCollection2, IDisposable
         void OnScrollWheel(InputAction.CallbackContext context);
         void OnTrackedDevicePosition(InputAction.CallbackContext context);
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
+    }
+    public interface IDialogueActions
+    {
+        void OnNextDialogue(InputAction.CallbackContext context);
     }
 }

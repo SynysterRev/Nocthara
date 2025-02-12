@@ -457,7 +457,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dd1c1a4728fdaf448d88cb20f29724e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _textSpeed: 0.018
+  TextSpeed: 0.018
   DialogueText: {fileID: 1384620704}
   CharacterName: {fileID: 332347826}
 --- !u!1 &519420028
@@ -1165,8 +1165,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Conditions:
   - rid: 3074513920268435532
-  DialogueList:
-  - {fileID: 11400000, guid: cd7133c2366fe0445aab3d01200b1b73, type: 2}
+  DialogueData: {fileID: 11400000, guid: cd7133c2366fe0445aab3d01200b1b73, type: 2}
   references:
     version: 2
     RefIds:
@@ -1290,6 +1289,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TypeWriter: {fileID: 500080854}
+  DialogueInput: {fileID: 11400000, guid: 1b59817546c9dc94d9b46f181c6033f5, type: 2}
 --- !u!1 &873174101
 GameObject:
   m_ObjectHideFlags: 0
@@ -1431,11 +1431,6 @@ MonoBehaviour:
     MaxWindowSize: 0
     Padding: 0
   m_LegacyMaxWindowSize: -2
---- !u!1 &892405916 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 522473606075200276, guid: 61dce1f9f7615604eb68b24f934e3985, type: 3}
-  m_PrefabInstance: {fileID: 2684316218928518458}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1028253200 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6437858654490170012, guid: 7bf064fa250a2ae4b82f9f54d818487d, type: 3}
@@ -2070,33 +2065,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6889139853088755454, guid: 61dce1f9f7615604eb68b24f934e3985, type: 3}
   m_PrefabInstance: {fileID: 2684316218928518458}
   m_PrefabAsset: {fileID: 0}
---- !u!50 &1941457046
-Rigidbody2D:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 892405916}
-  m_BodyType: 1
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 0
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 4
 --- !u!1 &2076884857
 GameObject:
   m_ObjectHideFlags: 0
@@ -2414,18 +2382,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 899125036393356055, guid: 61dce1f9f7615604eb68b24f934e3985, type: 3}
-      propertyPath: m_SpriteSortPoint
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4357147261226761778, guid: 61dce1f9f7615604eb68b24f934e3985, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5761620222049445575, guid: 61dce1f9f7615604eb68b24f934e3985, type: 3}
-      propertyPath: DashSpeed
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 6889139853088755454, guid: 61dce1f9f7615604eb68b24f934e3985, type: 3}
       propertyPath: m_LocalPosition.x
       value: 10.87
@@ -2469,10 +2425,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 522473606075200276, guid: 61dce1f9f7615604eb68b24f934e3985, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1941457046}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 61dce1f9f7615604eb68b24f934e3985, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

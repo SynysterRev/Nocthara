@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Matrix4x4 = UnityEngine.Matrix4x4;
 using Quaternion = UnityEngine.Quaternion;
 using Vector2 = UnityEngine.Vector2;
@@ -31,9 +32,10 @@ public class AttackBox
 
 public class PlayerController : MonoBehaviour, IDamageable
 {
+    [FormerlySerializedAs("PlayerPlayerInputs")]
     [Header("Input")]
     [SerializeField]
-    private InputManager PlayerInputs;
+    private PlayerInputManager PlayerInputs;
 
     [Header("Attack")]
     [SerializeField] 
@@ -84,12 +86,12 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private void OnEnable()
     {
-        EnableInput(true);
+        EnablePlayerInput(true);
     }
 
     private void OnDisable()
     {
-        EnableInput(false);
+        EnablePlayerInput(false);
     }
 
     private void Awake()
@@ -101,6 +103,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        BindPlayerInput(true);
         _playerManager = PlayerManager.Instance;
         _moveSpeed = _playerManager.Speed;
         _playerManager.OnDie += OnDie;
@@ -109,6 +112,7 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private void OnDestroy()
     {
+        BindPlayerInput(false);
         _playerManager.OnDie -= OnDie;
     }
 
@@ -126,13 +130,11 @@ public class PlayerController : MonoBehaviour, IDamageable
             Vector2 moveX = new Vector2(_move.x, 0.0f);
             if (!CheckForCollision(_moveSpeed, moveX))
             {
-                // _movement.Set(_move.x, _move.y);
                 transform.Translate(moveX * (_moveSpeed * Time.deltaTime), Space.World);
             }
             Vector2 moveY = new Vector2(0.0f, _move.y);
             if (!CheckForCollision(_moveSpeed, moveY))
             {
-                // _movement.Set(_move.x, _move.y);
                 transform.Translate(moveY * (_moveSpeed * Time.deltaTime), Space.World);
             }
         }
@@ -147,7 +149,7 @@ public class PlayerController : MonoBehaviour, IDamageable
             transform.Translate(direction * BumpForce, Space.World);
             _currentState = State.Bump;
             _collisionResolve.CollidingObject = null;
-            EnableInput(false);
+            BindPlayerInput(false);
             StartCoroutine(Bump());
         }
     }
@@ -176,7 +178,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     private IEnumerator Bump()
     {
         yield return new WaitForSeconds(0.3f);
-        EnableInput(true);
+        BindPlayerInput(true);
     }
 
     private void OnMove(Vector2 value)
@@ -353,7 +355,7 @@ public class PlayerController : MonoBehaviour, IDamageable
         }
     }
 
-    public void EnableInput(bool bEnable)
+    private void BindPlayerInput(bool bEnable)
     {
         if(bEnable)
         {
@@ -379,6 +381,10 @@ public class PlayerController : MonoBehaviour, IDamageable
         }
     }
 
+    public void EnablePlayerInput(bool enable)
+    {
+        PlayerInputs.EnableInput(enable);
+    }
     public void TakeDamage(int damage)
     {
         if (_playerManager.CanTakeDamage)
@@ -391,7 +397,7 @@ public class PlayerController : MonoBehaviour, IDamageable
     private void OnDie(int health, int maxHealth)
     {
         _move = Vector2.zero;
-        EnableInput(false);
+        BindPlayerInput(false);
         Animator.SetTrigger("IsDead");
         Animator.SetFloat("DirectionX", _lastFacedDirection.x);
         Animator.SetFloat("DirectionY", _lastFacedDirection.y);

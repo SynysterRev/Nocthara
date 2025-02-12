@@ -4,7 +4,7 @@ using UnityEngine;
 public class Npc : InteractObject
 {
     [SerializeField] 
-    private List<DialogueData> DialogueList;
+    private DialogueData DialogueData;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -19,12 +19,12 @@ public class Npc : InteractObject
 
     protected override void Interact(GameObject player, GameObject target)
     {
-        if (DialogueList.Count == 0)
+        if (DialogueData.Dialogues.Count == 0)
         {
             Debug.LogError("Aucun dialogue pour le PNJ " + gameObject.name);
             return;
         }
         
-        DialogueManager.Instance.StartDialogue(DialogueList[0].CharacterName, DialogueList[0].DialogueText);
+        DialogueManager.Instance.StartDialogue(DialogueData.Dialogues);
     }
 }
