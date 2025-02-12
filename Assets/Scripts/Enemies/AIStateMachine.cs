@@ -6,12 +6,16 @@ using UnityEngine;
 
 public class AIStateMachine : MonoBehaviour
 {
-    [SerializeField] private AIState StartState;
+    [SerializeField] 
+    private AIState StartState;
+
+    [SerializeField] 
+    private Transform AnchorWeapon;
+    private Quaternion _baseRotation;
 
     private AIState _currentState;
     private Enemy _enemy;
 
-    private Coroutine _checkCoroutine;
     private Dictionary<Type, Component> _cachedComponents;
 
     public Transform Target
@@ -29,8 +33,12 @@ public class AIStateMachine : MonoBehaviour
         get => GetParameter<bool>(nameof(IsStaying));
         set => SetParameter(nameof(IsStaying), value);
     }
+    
+    public bool IsAttacking { get; private set; }
+    public bool CanChangeState { get; set; } = true;
 
     private Coroutine _stayCoroutine;
+    private Coroutine _attackCoroutine;
 
     private Dictionary<string, object> _parameters = new Dictionary<string, object>();
     public void SetParameter<T>(string key, T value) => _parameters[key] = value;
@@ -44,11 +52,12 @@ public class AIStateMachine : MonoBehaviour
 
         return default;
     }
-
-
+    
     private void Awake()
     {
         _cachedComponents = new Dictionary<Type, Component>();
+        _baseRotation = AnchorWeapon.rotation;
+        AnchorWeapon.gameObject.SetActive(false);
     }
 
     private void Start()
@@ -56,6 +65,7 @@ public class AIStateMachine : MonoBehaviour
         _enemy = GetComponent<Enemy>();
         _checkPlayerTimer = _checkPlayerTime;
         _currentState = StartState;
+        _currentState?.InitializeBehaviour(this);
     }
 
     private void Update()
@@ -77,7 +87,9 @@ public class AIStateMachine : MonoBehaviour
     {
         if (_currentState != null && _currentState != newState)
         {
+            _currentState?.ExitBehaviour(this);
             _currentState = newState;
+            _currentState?.InitializeBehaviour(this);
         }
     }
 
@@ -93,7 +105,7 @@ public class AIStateMachine : MonoBehaviour
                 float angle = Vector3.Angle(_enemy.LastDirection, targetDirection);
                 if (angle > _enemy.ViewAngle / 2.0f + 10.0f) break;
                 PlayerController pc = coll2D.GetComponent<PlayerController>();
-                if (pc)
+                if (pc && !pc.IsDead())
                 {
                     Target = pc.transform;
                 }
@@ -166,5 +178,30 @@ public class AIStateMachine : MonoBehaviour
         yield return new WaitForSeconds(duration);
         IsStaying = false;
         _stayCoroutine = null;
+    }
+
+    public void StartAttack()
+    {
+        if (_attackCoroutine == null)
+        {
+            Animator.SetBool("IsWalking", false);
+            Animator.SetTrigger("Attack");
+            CanChangeState = false;
+            float angle = Vector2.SignedAngle(Vector2.down, Target.position - _enemy.transform.position);
+            AnchorWeapon.rotation = _baseRotation * Quaternion.AngleAxis(angle, Vector3.forward);
+            AnchorWeapon.gameObject.SetActive(true);
+            float animationLength = Tools.GetAnimationLength(Animator, "attack");
+            _attackCoroutine = StartCoroutine(AttackCoroutine(animationLength));
+        }
+    }
+    
+    private IEnumerator AttackCoroutine(float duration)
+    {
+        IsAttacking = true;
+        yield return new WaitForSeconds(duration);
+        IsAttacking = false;
+        _attackCoroutine = null;
+        AnchorWeapon.gameObject.SetActive(false);
+        CanChangeState = true;
     }
 }

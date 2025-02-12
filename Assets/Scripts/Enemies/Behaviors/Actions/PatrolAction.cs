@@ -4,19 +4,19 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Behaviors/Actions/Patrol")]
 public class PatrolAction : ActionBehavior
 {
-    private void Patrol(AIStateMachine stateMachine)
+    public override void Initialize(AIStateMachine stateMachine)
     {
-        var enemy = stateMachine.GetComponent<Enemy>();
         var wayPoint = stateMachine.GetComponent<WayPoint>();
-        if (!enemy.Agent.hasPath)
-        {
-            stateMachine.SetDestination(wayPoint.GetWayPoint());
-        }
+        stateMachine.SetDestination(wayPoint.GetWayPoint());
     }
 
     public override void Execute(AIStateMachine stateMachine)
     {
-        Patrol(stateMachine);
         stateMachine.UpdateDirection();
+    }
+
+    public override void Exit(AIStateMachine stateMachine)
+    {
+       
     }
 }

@@ -44,6 +44,8 @@ public class PlayerManager : Singleton<PlayerManager>
             InvulnerabilityTime = CharacterData.InvulnerabilityTime,
         };
     }
+    
+    public bool IsDead => _stats.Health <= 0;
 
     public void TakeDamage(int damage)
     {
@@ -64,7 +66,8 @@ public class PlayerManager : Singleton<PlayerManager>
     private IEnumerator TakeDamageCoroutine()
     {
         yield return new WaitForSeconds(_stats.InvulnerabilityTime);
-        CanTakeDamage = true;
+        if (!IsDead)
+            CanTakeDamage = true;
         _takeDamageCoroutine = null;
     }
 }

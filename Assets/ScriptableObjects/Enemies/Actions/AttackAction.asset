@@ -9,13 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1c41a44ecde268e43a005f48b267aa75, type: 3}
-  m_Name: BaseEnemy_Stats
+  m_Script: {fileID: 11500000, guid: 36877633080817e4594a31ea121679c7, type: 3}
+  m_Name: AttackAction
   m_EditorClassIdentifier: 
-  Health: 3
-  Damage: 10
-  Speed: 1
-  RangeAttack: 1
-  ViewRange: 2
-  ViewAngle: 60
-  RadiusChase: 6

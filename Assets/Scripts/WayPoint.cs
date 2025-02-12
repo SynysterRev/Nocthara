@@ -23,7 +23,7 @@ public class WayPoint : MonoBehaviour
 
     public bool HasReachedWayPoint(NavMeshAgent agent)
     {
-        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        if (agent.remainingDistance <= agent.stoppingDistance)
         {
             _wayPointReachedIndex = _currentWayPointIndex;
             return true;

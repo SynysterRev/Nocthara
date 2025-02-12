@@ -11,7 +11,7 @@ public class BehaviorTransition : ScriptableObject
 
     public virtual void Execute(AIStateMachine stateMachine)
     {
-        if (Decision.Decide(stateMachine))
+        if (stateMachine.CanChangeState && Decision.Decide(stateMachine))
         {
             foreach (TransitionEffect effect in TransitionEffects)
                 effect.Apply(stateMachine);

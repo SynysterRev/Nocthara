@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: AttackTransition
   m_EditorClassIdentifier: 
   Decision: {fileID: 11400000, guid: 5e1c7d9ce44b19543ac9dc5a411c94a0, type: 2}
-  Behavior: {fileID: 0}
+  Behavior: {fileID: 11400000, guid: 28cf323eee9bb6f47804f6e2b88e566d, type: 2}
+  TransitionEffects:
+  - {fileID: 11400000, guid: 56e50af88525ac34fa3a468fcda73c7f, type: 2}

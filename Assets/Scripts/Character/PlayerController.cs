@@ -166,7 +166,7 @@ public class PlayerController : MonoBehaviour, IDamageable
             distance, ~LayerMask.GetMask("Player"));
         if (DebugMode)
             DrawDebug();
-        if (hit.collider)
+        if (hit.collider && !hit.collider.isTrigger)
         {
             return true;
         }
@@ -347,9 +347,9 @@ public class PlayerController : MonoBehaviour, IDamageable
     {
         if (other.GetComponentInParent<Enemy>())
         {
-            _collisionResolve.IsColliding = true;
-            _collisionResolve.CollidingObject = other.gameObject;
-            TakeDamage(1);
+            // _collisionResolve.IsColliding = true;
+            // _collisionResolve.CollidingObject = other.gameObject;
+            // TakeDamage(1);
         }
     }
 
@@ -392,5 +392,13 @@ public class PlayerController : MonoBehaviour, IDamageable
     {
         _move = Vector2.zero;
         EnableInput(false);
+        Animator.SetTrigger("IsDead");
+        Animator.SetFloat("DirectionX", _lastFacedDirection.x);
+        Animator.SetFloat("DirectionY", _lastFacedDirection.y);
+    }
+
+    public bool IsDead()
+    {
+        return PlayerManager.Instance.IsDead;
     }
 }

@@ -15,7 +15,7 @@ public class EnemyStat
     // public float ViewAngle;
 }
 
-public class Enemy : MonoBehaviour, IDamageable, IAttack
+public class Enemy : MonoBehaviour, IDamageable
 {
     [SerializeField] 
     private EnemyData Data;
@@ -38,6 +38,7 @@ public class Enemy : MonoBehaviour, IDamageable, IAttack
     public float ViewAngle => Data.ViewAngle;
     public float RadiusChase => Data.RadiusChase;
     public float RangeAttack => Data.RangeAttack;
+    public int Damage => Data.Damage;
 
     private void Awake()
     {
@@ -95,10 +96,5 @@ public class Enemy : MonoBehaviour, IDamageable, IAttack
         //move cone in direction of enemy movement
         float angle = -Vector3.SignedAngle(Vector3.up, LastDirection, Vector3.forward);
         return new Vector3(Mathf.Sin((angleInDegrees + angle) * Mathf.Deg2Rad), Mathf.Cos((angleInDegrees + angle) * Mathf.Deg2Rad),0.0f);
-    }
-
-    public void DoAttack()
-    {
-        
     }
 }
