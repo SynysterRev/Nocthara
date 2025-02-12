@@ -72,7 +72,6 @@ public class TypeWriter : MonoBehaviour
 
     public void SkipToEnd()
     {
-        Debug.Log("skip to end");
         EndDisplayText();
     }
 
@@ -82,7 +81,6 @@ public class TypeWriter : MonoBehaviour
         {
             DialogueText.SetText(_finalText);
         }
-        Debug.Log("end display");
         _updateText = false;
         OnTypeWriterEnd?.Invoke();
         StopCoroutine(_writingCoroutine);
