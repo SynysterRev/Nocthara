@@ -36,6 +36,12 @@ public class PlayerManager : Singleton<PlayerManager>
     
     public PlayerController PlayerController => _playerController;
 
+    private int _money;
+    
+    public int Money => _money;
+    public int Health => _stats.Health;
+    public int MaxHealth => _stats.MaxHealth;
+
     protected override void Awake()
     {
         base.Awake();
@@ -79,5 +85,23 @@ public class PlayerManager : Singleton<PlayerManager>
         if (!IsDead)
             CanTakeDamage = true;
         _takeDamageCoroutine = null;
+    }
+
+    public void RestoreHealth(int restoreHealth)
+    {
+        _stats.Health = Mathf.Clamp(_stats.Health + restoreHealth, 0, _stats.MaxHealth);
+    }
+
+    public void AddMoney(int amount)
+    {
+        _money += amount;
+    }
+
+    public void UseMoney(int amount)
+    {
+        if (_money >= amount)
+        {
+            _money -= amount;
+        }
     }
 }

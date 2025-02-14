@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BaseEnemy_Stats
   m_EditorClassIdentifier: 
   Health: 3
-  Damage: 10
+  Damage: 1
   Speed: 1
   RangeAttack: 1
   ViewRange: 2
