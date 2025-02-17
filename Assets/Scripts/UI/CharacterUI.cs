@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,7 +20,18 @@ public class CharacterUI : MonoBehaviour
     {
         PlayerManager.Instance.OnTakeDamage += UpdateHealth;
         PlayerManager.Instance.OnRestaureHealth += UpdateHealth;
+        PlayerManager.Instance.OnUpgradeMaxHealth += UpgradeMaxHealth;
         CreateHealthBar();
+    }
+
+    private void OnDestroy()
+    {
+        // if (PlayerManager.Instance != null)
+        // {
+        //     PlayerManager.Instance.OnTakeDamage -= UpdateHealth;
+        //     PlayerManager.Instance.OnRestaureHealth -= UpdateHealth;
+        //     PlayerManager.Instance.OnUpgradeMaxHealth -= UpgradeMaxHealth;
+        // }
     }
 
     // Update is called once per frame
@@ -63,5 +75,10 @@ public class CharacterUI : MonoBehaviour
             heart.fillAmount = Mathf.Clamp01(leftPiecesOfHeart / 4.0f);
             leftPiecesOfHeart -= 4;
         }
+    }
+
+    private void UpgradeMaxHealth(int currentHealth, int maxHealth)
+    {
+        
     }
 }

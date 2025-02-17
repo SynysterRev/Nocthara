@@ -20,6 +20,7 @@ public class PlayerManager : Singleton<PlayerManager>
     public event HealthChange OnTakeDamage;
     public event HealthChange OnRestaureHealth;
     public event HealthChange OnDie;
+    public event HealthChange OnUpgradeMaxHealth;
 
     public float Speed => _stats.Speed;
     public float InvulnerabilityTime => _stats.InvulnerabilityTime;
@@ -103,5 +104,11 @@ public class PlayerManager : Singleton<PlayerManager>
         {
             _money -= amount;
         }
+    }
+
+    public void UpgradeMaxHealth()
+    {
+        _stats.MaxHealth += 4;
+        OnUpgradeMaxHealth?.Invoke(_stats.Health, _stats.MaxHealth);
     }
 }

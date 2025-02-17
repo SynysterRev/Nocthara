@@ -6,7 +6,9 @@ using UnityEngine;
 public class DialogueManager : Singleton<DialogueManager>
 {
     [SerializeField] 
-    private TypeWriter TypeWriter;
+    private GameObject TypeWriterPrefab;
+    
+    private TypeWriter _typeWriter;
 
     private List<Dialogue> _dialogues;
     private int _currentDialogueIndex;
@@ -20,10 +22,6 @@ public class DialogueManager : Singleton<DialogueManager>
     private void OnEnable()
     {
         DialogueInput.EnableInput(true);
-        if (!_playerController)
-        {
-            _playerController = PlayerManager.Instance.PlayerController;
-        }
     }
 
     private void OnDisable()
@@ -34,8 +32,12 @@ public class DialogueManager : Singleton<DialogueManager>
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        if (!_playerController)
+        {
+            _playerController = PlayerManager.Instance.PlayerController;
+        }
         BindInput(true);
-        gameObject.SetActive(false);
+        DialogueInput.EnableInput(false);
     }
 
     private void OnDestroy()
@@ -62,18 +64,29 @@ public class DialogueManager : Singleton<DialogueManager>
 
     public void StartDialogue(List<Dialogue> dialogues)
     {
-        gameObject.SetActive(true);
         if (_playerController != null)
         {
             _playerController.EnablePlayerInput(false);
         }
+        if (DialogueInput)
+        {
+            DialogueInput.EnableInput(true);
+        }
         _dialogues = dialogues;
         _currentDialogueIndex = 0;
-        if (TypeWriter)
+
+        if (_typeWriter == null)
         {
-            TypeWriter.OnTypeWriterEnd += OnTypeWriterEnd;
+            GameObject parent = GameObject.FindGameObjectWithTag("UICanvas");
+            _typeWriter = Instantiate(TypeWriterPrefab, parent.transform).GetComponent<TypeWriter>();
+        }
+        
+        if (_typeWriter)
+        {
+            _typeWriter.gameObject.SetActive(true);
+            _typeWriter.OnTypeWriterEnd += OnTypeWriterEnd;
             _isDialogueRunning = true;
-            TypeWriter.StartTypeWriter(_dialogues[_currentDialogueIndex].DialogueText,
+            _typeWriter.StartTypeWriter(_dialogues[_currentDialogueIndex].DialogueText,
                 _dialogues[_currentDialogueIndex].CharacterName);
         }
     }
@@ -83,15 +96,21 @@ public class DialogueManager : Singleton<DialogueManager>
         _dialogues = null;
         _currentDialogueIndex = 0;
         _isDialogueRunning = false;
-        if (TypeWriter)
+        if (_typeWriter)
         {
-            TypeWriter.OnTypeWriterEnd -= OnTypeWriterEnd;
+            _typeWriter.OnTypeWriterEnd -= OnTypeWriterEnd;
+            _typeWriter.gameObject.SetActive(false);
         }
+
+        if (DialogueInput)
+        {
+            DialogueInput.EnableInput(false);
+        }
+
         if (_playerController != null)
         {
             _playerController.EnablePlayerInput(true);
         }
-        gameObject.SetActive(false);
     }
 
     private void OnTypeWriterEnd()
@@ -101,9 +120,9 @@ public class DialogueManager : Singleton<DialogueManager>
 
     private void OnInteract()
     {
-        if (_isDialogueRunning)
+        if (_isDialogueRunning && _typeWriter)
         {
-            TypeWriter.SkipToEnd();
+            _typeWriter.SkipToEnd();
             return;
         }
         _currentDialogueIndex++;
@@ -112,10 +131,10 @@ public class DialogueManager : Singleton<DialogueManager>
             EndDialogue();
             return;
         }
-        if (TypeWriter)
+        if (_typeWriter)
         {
             _isDialogueRunning = true;
-            TypeWriter.StartTypeWriter(_dialogues[_currentDialogueIndex].DialogueText,
+            _typeWriter.StartTypeWriter(_dialogues[_currentDialogueIndex].DialogueText,
                 _dialogues[_currentDialogueIndex].CharacterName);
         }
     }
