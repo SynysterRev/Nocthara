@@ -29,4 +29,6 @@ public struct Dialogue
     public string CharacterName;
     [MaxStringLength(150)]
     public string DialogueText;
+
+    public Sprite Insert;
 }

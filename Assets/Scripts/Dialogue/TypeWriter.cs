@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class TypeWriter : MonoBehaviour
 {
@@ -9,9 +11,14 @@ public class TypeWriter : MonoBehaviour
 
     public event TypeWriterEnd OnTypeWriterEnd;
 
-    [SerializeField] private float TextSpeed = 0.018f;
-    [SerializeField] private TextMeshProUGUI DialogueText;
-    [SerializeField] private TextMeshProUGUI CharacterName;
+    [SerializeField] 
+    private float TextSpeed = 0.018f;
+    [SerializeField] 
+    private TextMeshProUGUI DialogueText;
+    [SerializeField] 
+    private TextMeshProUGUI CharacterName;
+    [SerializeField] 
+    private Image Insert;
     private const string _alphaMark = "alpha=#00";
     private string _textToDisplay;
     private string _finalText;
@@ -19,6 +26,15 @@ public class TypeWriter : MonoBehaviour
     private bool _updateText = false;
     private int _textLength = 0;
     private Coroutine _writingCoroutine;
+
+    private void Start()
+    {
+        if (Insert)
+        {
+            Insert.sprite = null;
+            Insert.gameObject.SetActive(false);
+        }
+    }
 
     public void StartTypeWriter(string textToDisplay, string characterName)
     {
@@ -28,6 +44,24 @@ public class TypeWriter : MonoBehaviour
         _textToDisplay = "";
         _numberCharacterToDisplay = 0;
         ParseText();
+    }
+
+    public void DisplayInsert(Sprite sprite)
+    {
+        if (Insert)
+        {
+            Insert.sprite = sprite;
+            Insert.gameObject.SetActive(true);
+        }
+    }
+
+    public void HideInsert()
+    {
+        if (Insert)
+        {
+            Insert.sprite = null;
+            Insert.gameObject.SetActive(false);
+        }
     }
 
     private void ParseText()

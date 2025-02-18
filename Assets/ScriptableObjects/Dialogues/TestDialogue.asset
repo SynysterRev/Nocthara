@@ -14,8 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Dialogues:
   - CharacterName: 
-    DialogueText: "On voit des boitiers de merde dans cette soci\xE9t\xE9."
+    DialogueText: "On vend des boitiers de merde dans cette soci\xE9t\xE9."
+    Insert: {fileID: 0}
   - CharacterName: Paup
-    DialogueText: "On voit des boitiers de merde dans cette soci\xE9t\xE9."
+    DialogueText: "C clak\xE9"
+    Insert: {fileID: 6430210659163803644, guid: 558bbca54373dd64b9a68d418e8bb6eb, type: 3}
   - CharacterName: Mimimon
     DialogueText: Courage jeune Pauppy.
+    Insert: {fileID: 0}

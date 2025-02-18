@@ -86,7 +86,7 @@ public class DialogueManager : Singleton<DialogueManager>
         }
     }
 
-    private void StartTypeWriter(string firstDialogue, string characterName)
+    private void StartTypeWriter(string firstDialogue, string characterName, Sprite insert=null)
     {
         if (_typeWriter)
         {
@@ -94,6 +94,10 @@ public class DialogueManager : Singleton<DialogueManager>
             _typeWriter.OnTypeWriterEnd += OnTypeWriterEnd;
             _isDialogueRunning = true;
             _typeWriter.StartTypeWriter(firstDialogue,characterName);
+            if (insert)
+            {
+                _typeWriter.DisplayInsert(insert);
+            }
         }
     }
 
@@ -106,11 +110,11 @@ public class DialogueManager : Singleton<DialogueManager>
             _dialogues[_currentDialogueIndex].CharacterName);
     }
 
-    public void StartOneDialogue(string dialogueText)
+    public void StartOneDialogue(string dialogueText, Sprite insert=null)
     {
         InitDialogue();
         _numberDialogues = 1;
-        StartTypeWriter(dialogueText, "");
+        StartTypeWriter(dialogueText, "", insert);
     }
 
     private void EndDialogue()
@@ -120,6 +124,7 @@ public class DialogueManager : Singleton<DialogueManager>
         _isDialogueRunning = false;
         if (_typeWriter)
         {
+            _typeWriter.HideInsert();
             _typeWriter.OnTypeWriterEnd -= OnTypeWriterEnd;
             _typeWriter.gameObject.SetActive(false);
         }
@@ -159,6 +164,12 @@ public class DialogueManager : Singleton<DialogueManager>
             _isDialogueRunning = true;
             _typeWriter.StartTypeWriter(_dialogues[_currentDialogueIndex].DialogueText,
                 _dialogues[_currentDialogueIndex].CharacterName);
+            if(_dialogues[_currentDialogueIndex].Insert)
+                _typeWriter.DisplayInsert(_dialogues[_currentDialogueIndex].Insert);
+            else
+            {
+                _typeWriter.HideInsert();
+            }
         }
     }
 }
