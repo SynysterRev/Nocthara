@@ -157,8 +157,7 @@ public class SpriteAnimator : MonoBehaviour
                 gameObject.SendMessageUpwards(animationTrigger.Name);
             }
         }
- 
-        if (CurrentFrame >= currentAnim.Frames.Length)
+        if (CurrentFrame >= currentAnim.Frames.Length - 1)
         {
             if (Loop)
                 CurrentFrame = 0;

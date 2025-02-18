@@ -1872,6 +1872,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1978992062486402293, guid: 55e2c67987f094b4797962d3c25db978, type: 3}
+      propertyPath: Animations.Array.data[0].Triggers.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2441269353133314112, guid: 55e2c67987f094b4797962d3c25db978, type: 3}
+      propertyPath: Item
+      value: 
+      objectReference: {fileID: 11400000, guid: bcc03e590cd027b42b5ff4b7ef07218e, type: 2}
     - target: {fileID: 4464516150106902945, guid: 55e2c67987f094b4797962d3c25db978, type: 3}
       propertyPath: m_Name
       value: Chest

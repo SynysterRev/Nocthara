@@ -5,19 +5,41 @@ using UnityEngine;
 
 public class Chest : InteractObject
 {
-    public SpriteAnimator SpriteAnimator;
+    [SerializeField] private Item Item;
+    private SpriteAnimator _spriteAnimator;
     private bool _isOpen;
+
     void Start()
     {
-        SpriteAnimator = GetComponent<SpriteAnimator>();
+        _spriteAnimator = GetComponent<SpriteAnimator>();
     }
-    
+
     protected override void Interact(GameObject player, GameObject target)
     {
         if (!_isOpen)
         {
             _isOpen = true;
-            SpriteAnimator.Play("opening", false);
+            _spriteAnimator.Play("opening", false);
+            _spriteAnimator.onAnimationFinished += OnAnimationFinished;
+        }
+    }
+
+    private void OnAnimationFinished()
+    {
+        if (Item)
+        {
+            //play player animation get object
+            DialogueManager.Instance.OnTypeWriterEnds += OnTypeWriterEnds;
+            DialogueManager.Instance.StartOneDialogue($"GG tu as gagné {Item.ItemName}. {Item.ItemDescription}.");
+        }
+    }
+
+    private void OnTypeWriterEnds()
+    {
+        if (Item.ItemType == ItemType.Money)
+        {
+            //reset player anim
+            PlayerManager.Instance.AddMoney(Item.ItemPrice);
         }
     }
 }

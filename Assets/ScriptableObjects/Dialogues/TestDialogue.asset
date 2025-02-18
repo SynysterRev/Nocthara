@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: TestDialogue
   m_EditorClassIdentifier: 
   Dialogues:
-  - CharacterName: Paup
+  - CharacterName: 
     DialogueText: "On voit des boitiers de merde dans cette soci\xE9t\xE9."
   - CharacterName: Paup
-    DialogueText: "J'esp\xE8re bient\xF4t pouvoir en changer."
+    DialogueText: "On voit des boitiers de merde dans cette soci\xE9t\xE9."
   - CharacterName: Mimimon
     DialogueText: Courage jeune Pauppy.

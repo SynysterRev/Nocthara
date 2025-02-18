@@ -5,6 +5,10 @@ using UnityEngine;
 
 public class DialogueManager : Singleton<DialogueManager>
 {
+    public delegate void TypeWriterDelegate();
+    public event TypeWriterDelegate OnTypeWriterEnds;
+    
+    
     [SerializeField] 
     private GameObject TypeWriterPrefab;
     
@@ -12,6 +16,7 @@ public class DialogueManager : Singleton<DialogueManager>
 
     private List<Dialogue> _dialogues;
     private int _currentDialogueIndex;
+    private int _numberDialogues;
     private bool _isDialogueRunning;
 
     [SerializeField]
@@ -62,7 +67,7 @@ public class DialogueManager : Singleton<DialogueManager>
     {
     }
 
-    public void StartDialogue(List<Dialogue> dialogues)
+    private void InitDialogue()
     {
         if (_playerController != null)
         {
@@ -72,23 +77,40 @@ public class DialogueManager : Singleton<DialogueManager>
         {
             DialogueInput.EnableInput(true);
         }
-        _dialogues = dialogues;
         _currentDialogueIndex = 0;
 
-        if (_typeWriter == null)
+        if (_typeWriter == null && TypeWriterPrefab)
         {
             GameObject parent = GameObject.FindGameObjectWithTag("UICanvas");
             _typeWriter = Instantiate(TypeWriterPrefab, parent.transform).GetComponent<TypeWriter>();
         }
-        
+    }
+
+    private void StartTypeWriter(string firstDialogue, string characterName)
+    {
         if (_typeWriter)
         {
             _typeWriter.gameObject.SetActive(true);
             _typeWriter.OnTypeWriterEnd += OnTypeWriterEnd;
             _isDialogueRunning = true;
-            _typeWriter.StartTypeWriter(_dialogues[_currentDialogueIndex].DialogueText,
-                _dialogues[_currentDialogueIndex].CharacterName);
+            _typeWriter.StartTypeWriter(firstDialogue,characterName);
         }
+    }
+
+    public void StartDialogue(List<Dialogue> dialogues)
+    {
+        InitDialogue();
+        _dialogues = dialogues;
+        _numberDialogues = _dialogues.Count;
+        StartTypeWriter(_dialogues[_currentDialogueIndex].DialogueText,
+            _dialogues[_currentDialogueIndex].CharacterName);
+    }
+
+    public void StartOneDialogue(string dialogueText)
+    {
+        InitDialogue();
+        _numberDialogues = 1;
+        StartTypeWriter(dialogueText, "");
     }
 
     private void EndDialogue()
@@ -111,6 +133,7 @@ public class DialogueManager : Singleton<DialogueManager>
         {
             _playerController.EnablePlayerInput(true);
         }
+        OnTypeWriterEnds?.Invoke();
     }
 
     private void OnTypeWriterEnd()
@@ -126,7 +149,7 @@ public class DialogueManager : Singleton<DialogueManager>
             return;
         }
         _currentDialogueIndex++;
-        if (_currentDialogueIndex >= _dialogues.Count)
+        if (_currentDialogueIndex >= _numberDialogues)
         {
             EndDialogue();
             return;
