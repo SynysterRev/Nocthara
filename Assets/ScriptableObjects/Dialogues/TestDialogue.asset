@@ -17,8 +17,9 @@ MonoBehaviour:
     DialogueText: "On vend des boitiers de merde dans cette soci\xE9t\xE9."
     Insert: {fileID: 0}
   - CharacterName: Paup
-    DialogueText: "C clak\xE9"
+    DialogueText: "C clak\xE9 <color=#FF0000>mmmmm<b>ahahahahahai</b>sdsds</color>
+      \xE7a va marcher"
     Insert: {fileID: 6430210659163803644, guid: 558bbca54373dd64b9a68d418e8bb6eb, type: 3}
-  - CharacterName: Mimimon
-    DialogueText: Courage jeune Pauppy.
+  - CharacterName: Burger
+    DialogueText: "Bient\xF4t l'heure de miam"
     Insert: {fileID: 0}
