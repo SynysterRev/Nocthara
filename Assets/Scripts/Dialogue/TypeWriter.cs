@@ -80,12 +80,6 @@ public class TypeWriter : MonoBehaviour
 
     private void ParseText()
     {
-        //m_TextToDisplay = string.Format("<{0}>{1}", c_AlphaMark, m_FinalText);
-        //if (m_TxtMeshPro)
-        //{
-        //    m_TxtMeshPro.SetText(m_TextToDisplay);
-        //}
-        
         _textTags = new List<TextTag>();
         for (int i = 0; i < _finalText.Length; ++i)
         {
@@ -97,13 +91,11 @@ public class TypeWriter : MonoBehaviour
                     {
                         if (_finalText[i + 1] == '/')
                         {
-                            string test = _finalText.Substring(i, j - i + 1);
-                            _textTags.Add(new TextTag(TextTag.TagType.CloseTag, test));
+                            _textTags.Add(new TextTag(TextTag.TagType.CloseTag, _finalText.Substring(i, j - i + 1)));
                         }
                         else
                         {
-                            string test = _finalText.Substring(i, j - i + 1);
-                            _textTags.Add(new TextTag(TextTag.TagType.OpenTag, test));
+                            _textTags.Add(new TextTag(TextTag.TagType.OpenTag, _finalText.Substring(i, j - i + 1)));
                         }
 
                         i = j;
@@ -114,7 +106,6 @@ public class TypeWriter : MonoBehaviour
             else
             {
                 _textTags.Add(new TextTag(TextTag.TagType.Text, _finalText[i].ToString()));
-                _textToDisplay += _finalText[i];
             }
         }
         _updateText = true;
@@ -167,10 +158,9 @@ public class TypeWriter : MonoBehaviour
             }
             else if (i == (int)_numberCharacterToDisplay)
             {
-                foreach (var toast in stack)
+                foreach (var tag in stack)
                 {
-                    // Debug.Log("pourquoi ça " + GetClosingTag(toast).ToString() + " marche pas");
-                    visibleText += GetClosingTag(toast) + $"<{_alphaMark}>";
+                    visibleText += GetClosingTag(tag) + $"<{_alphaMark}>";
                 }
                 stack.Clear();
             }
@@ -183,7 +173,6 @@ public class TypeWriter : MonoBehaviour
                 }
             }
         }
-        // Debug.Log(test);
         _textToDisplay = $"{visibleText}<{_alphaMark}>{hiddenText}";
         // _textToDisplay =
         //     $"{_finalText.Substring(0, (int)_numberCharacterToDisplay)}<{_alphaMark}>{_finalText.Substring((int)_numberCharacterToDisplay)}";
