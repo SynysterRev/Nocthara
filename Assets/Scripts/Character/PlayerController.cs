@@ -407,4 +407,9 @@ public class PlayerController : MonoBehaviour, IDamageable
     {
         return PlayerManager.Instance.IsDead;
     }
+
+    public void ChangeFacingDirection(Vector2 direction)
+    {
+        _lastFacedDirection = direction;
+    }
 }

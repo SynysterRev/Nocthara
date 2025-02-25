@@ -1,3 +1,4 @@
+using Unity.Cinemachine;
 using UnityEngine;
 
 public class Tools
@@ -14,5 +15,10 @@ public class Tools
         }
 
         return 0.0f;
+    }
+
+    public static CinemachineCamera GetCurrentVirtualCamera()
+    {
+        return CinemachineBrain.GetActiveBrain(0).ActiveVirtualCamera as CinemachineCamera;
     }
 }

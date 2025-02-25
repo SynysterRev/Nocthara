@@ -11,6 +11,7 @@ public class PlayerInputManager : ScriptableObject, PlayerInput_Actions.IPlayerA
     public event UnityAction DashEvent;
     public event UnityAction AttackEvent;
     public event UnityAction InteractEvent;
+    public event UnityAction UseSkillEvent;
 
     private PlayerInput_Actions _playerInput;
 
@@ -43,10 +44,6 @@ public class PlayerInputManager : ScriptableObject, PlayerInput_Actions.IPlayerA
             MoveEvent?.Invoke(context.ReadValue<Vector2>());
     }
 
-    public void OnLook(InputAction.CallbackContext context)
-    {
-    }
-
     public void OnAttack(InputAction.CallbackContext context)
     {
         if (context.phase is InputActionPhase.Started)
@@ -69,17 +66,15 @@ public class PlayerInputManager : ScriptableObject, PlayerInput_Actions.IPlayerA
     {
     }
 
-    public void OnPrevious(InputAction.CallbackContext context)
-    {
-    }
-
-    public void OnNext(InputAction.CallbackContext context)
-    {
-    }
-
     public void OnDash(InputAction.CallbackContext context)
     {
         if (context.phase is InputActionPhase.Started)
             DashEvent?.Invoke();
+    }
+
+    public void OnSkill(InputAction.CallbackContext context)
+    {
+        if (context.phase is InputActionPhase.Started)
+            UseSkillEvent?.Invoke();
     }
 }

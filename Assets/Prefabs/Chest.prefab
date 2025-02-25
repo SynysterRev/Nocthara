@@ -105,7 +105,7 @@ MonoBehaviour:
   Conditions:
   - rid: 3074513887006031953
   - rid: 3074513887006031955
-  SpriteAnimator: {fileID: 0}
+  Item: {fileID: 11400000, guid: bcc03e590cd027b42b5ff4b7ef07218e, type: 2}
   references:
     version: 2
     RefIds:
@@ -142,9 +142,7 @@ MonoBehaviour:
     OnAnimationFinished:
       m_PersistentCalls:
         m_Calls: []
-    Triggers:
-    - Frame: 0
-      Name: 
+    Triggers: []
   PlayAnimationOnStart: 
 --- !u!61 &2533852190073063974
 BoxCollider2D:
