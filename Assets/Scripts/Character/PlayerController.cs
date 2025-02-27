@@ -412,4 +412,22 @@ public class PlayerController : MonoBehaviour, IDamageable
     {
         _lastFacedDirection = direction;
     }
+
+    public void EnteringDoor(Vector2 direction, float speed)
+    {
+        _move = direction;
+        _moveSpeed = speed;
+        _currentState = State.Walk;
+    }
+
+    public void ResetMoveSpeed()
+    {
+        _moveSpeed = _playerManager.Speed;
+    }
+
+    public void StopMoving()
+    {
+        _currentState = State.Idle;
+        _move = Vector2.zero;
+    }
 }
