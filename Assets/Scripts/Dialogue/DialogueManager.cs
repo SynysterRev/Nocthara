@@ -62,11 +62,6 @@ public class DialogueManager : Singleton<DialogueManager>
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-    }
-
     private void InitDialogue()
     {
         if (_playerController != null)

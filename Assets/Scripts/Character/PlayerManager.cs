@@ -42,6 +42,7 @@ public class PlayerManager : Singleton<PlayerManager>
     public int Money => _money;
     public int Health => _stats.Health;
     public int MaxHealth => _stats.MaxHealth;
+    public bool CanAttack { get; set; } = false;
 
     protected override void Awake()
     {

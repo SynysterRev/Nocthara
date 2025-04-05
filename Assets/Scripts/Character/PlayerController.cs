@@ -245,6 +245,8 @@ public class PlayerController : MonoBehaviour, IDamageable
 
     private void OnAttack()
     {
+        if (!_playerManager.CanAttack)
+            return;
         //play animation
         _currentState = State.Attack;
         float angle = Vector2.SignedAngle(Vector2.down, _lastFacedDirection.normalized);
@@ -359,25 +361,17 @@ public class PlayerController : MonoBehaviour, IDamageable
     {
         if(bEnable)
         {
-            // iM.JumpEvent += OnJump;
-            // iM.SprintEvent += OnSprint;
-            // iM.SprintEventCanceled += OnSprintCanceled;
             PlayerInputs.MoveEvent += OnMove;
             PlayerInputs.DashEvent += OnDash;
             PlayerInputs.AttackEvent += OnAttack;
-            // iM.LookEvent += OnLook;
             PlayerInputs.InteractEvent += OnInteract;
         }
         else
         {
-            // iM.JumpEvent -= OnJump;
-            // iM.SprintEvent -= OnSprint;
-            // iM.SprintEventCanceled -= OnSprintCanceled;
             PlayerInputs.MoveEvent -= OnMove;
             PlayerInputs.DashEvent -= OnDash;
             PlayerInputs.AttackEvent -= OnAttack;
             PlayerInputs.InteractEvent -= OnInteract;
-            // iM.LookEvent -= OnLook;
         }
     }
 
