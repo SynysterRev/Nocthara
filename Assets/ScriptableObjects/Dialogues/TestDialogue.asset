@@ -14,12 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Dialogues:
   - CharacterName: 
-    DialogueText: "On vend des boitiers de merde dans cette soci\xE9t\xE9."
+    DialogueText: Such a good prototype!
     Insert: {fileID: 0}
   - CharacterName: Paup
-    DialogueText: "C clak\xE9 <color=#FF0000>mmmmm<b>ahahahahahai</b>sdsds</color>
-      \xE7a va marcher"
+    DialogueText: A test <color=#FF0000>color<b></b>bold</color>
     Insert: {fileID: 6430210659163803644, guid: 558bbca54373dd64b9a68d418e8bb6eb, type: 3}
   - CharacterName: Burger
-    DialogueText: "Bient\xF4t l'heure de miam"
+    DialogueText: I'm hungry
     Insert: {fileID: 0}

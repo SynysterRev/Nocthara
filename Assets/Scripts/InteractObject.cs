@@ -23,7 +23,7 @@ public class InteractObject : MonoBehaviour, IInteractable
     {
         foreach (InteractionCondition condition in Conditions)
         {
-            if (!condition.IsMet(player, target)) return false;
+            if (condition != null && !condition.IsMet(player, target)) return false;
         }
         return true;
     }

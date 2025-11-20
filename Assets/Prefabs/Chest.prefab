@@ -102,21 +102,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1db685ec5d847104894c9122f49c3f84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Conditions:
-  - rid: 3074513887006031953
-  - rid: 3074513887006031955
+  Conditions: []
   Item: {fileID: 11400000, guid: bcc03e590cd027b42b5ff4b7ef07218e, type: 2}
   references:
     version: 2
-    RefIds:
-    - rid: 3074513887006031953
-      type: {class: DistanceCondition, ns: , asm: Assembly-CSharp}
-      data:
-        Distance: 1
-    - rid: 3074513887006031955
-      type: {class: FacingCondition, ns: , asm: Assembly-CSharp}
-      data:
-        TargetDirection: {x: 0, y: 1}
+    RefIds: []
 --- !u!114 &1978992062486402293
 MonoBehaviour:
   m_ObjectHideFlags: 0
